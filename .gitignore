@@ -45,3 +45,10 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+MySkin/packages/
+MySkin/WriteableBitmapEx_v1.5.0.0/
+MySkin/x64/
+MySkin/Debug/
+MySkin/.nuget/
+MySkin/MySkin/bin/
+MySkin/MySkin/obj/
