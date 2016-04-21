@@ -11,7 +11,7 @@ using Windows.ApplicationModel;
 using System.IO;
 using Accord.Imaging.Converters;
 using AForge.Imaging.Filters;
-using Accord.Imaging;
+//using Accord.Imaging;
 using System.Collections.Generic;
 using AForge.Math;
 using Windows.UI.Xaml.Media;
@@ -19,6 +19,7 @@ using Windows.UI;
 using Windows.Graphics.Imaging;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Accord.Imaging;
 
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
@@ -201,8 +202,9 @@ namespace MySkin
             Rectangle aimedRectangle = new Rectangle();
             int area, nBlobs;
             double colorDeviation = 0.0f;
+            System.Drawing.Color stDev;
 
-            BlobCounter blobCounter = new BlobCounter();
+            AForge.Imaging.BlobCounter blobCounter = new AForge.Imaging.BlobCounter();
             blobCounter.FilterBlobs = true;
             blobCounter.MinWidth = 20;
             blobCounter.MinHeight = 20;
@@ -287,57 +289,58 @@ namespace MySkin
 
             ////canny.ApplyInPlace(tBimage);
             ////setBackImage(tBimage);
-            //blobCounter.ProcessImage(tBimage);
+            blobCounter.ProcessImage(tBimage);
 
-            //int index = 0;
-            //aimedRectangle = getMaxRectangle(blobCounter.GetObjectsRectangles(), index, tBimage.Width, tBimage.Height);
+            int index = 0;
+            aimedRectangle = getMaxRectangle(blobCounter.GetObjectsRectangles(), index, tBimage.Width, tBimage.Height);
 
-            //List<AForge.IntPoint> points = blobCounter.GetBlobsEdgePoints(blobCounter.GetObjectsInformation()[index]);
+            List<AForge.IntPoint> points = blobCounter.GetBlobsEdgePoints(blobCounter.GetObjectsInformation()[index]);
 
-            //Blob nev = blobCounter.GetObjectsInformation()[index];
-            //blobCounter.ExtractBlobsImage(tBimage, nev, true);
-            //AForge.Point center = nev.CenterOfGravity;
-            //area = nev.Area;
-            ////colorDeviation = nev.Image.ToManagedImage().StandardDeviation(nev.Image.ToManagedImage().Mean());
+            AForge.Imaging.Blob nev = blobCounter.GetObjectsInformation()[index];
+            blobCounter.ExtractBlobsImage(tBimage, nev, true);
+            AForge.Point center = nev.CenterOfGravity;
+            area = nev.Area;
 
-            //crop = new Crop(aimedRectangle);
+            stDev = nev.ColorStdDev; //nev.Image.ToManagedImage().StandardDeviation(nev.Image.ToManagedImage().Mean());
+
+            crop = new Crop(aimedRectangle);
 
 
 
-            //tColorImage = crop.Apply(image);
-            //ImageStatistics stats = new ImageStatistics(tColorImage);
-            //Histogram red = stats.Red;
-            //Histogram green = stats.Green;
-            //Histogram blue = stats.Blue;
+            tColorImage = crop.Apply(image);
+            AForge.Imaging.ImageStatistics stats = new AForge.Imaging.ImageStatistics(tColorImage);
+            Histogram red = stats.Red;
+            Histogram green = stats.Green;
+            Histogram blue = stats.Blue;
             ////im2matr.Convert(tColorImage, out cMatrix);
 
             //tColorImage = tBimage;
             //tBimage = crop.Apply(tBimage);
 
             //colorDeviation = (red.StdDev + green.StdDev + blue.StdDev) / 3;
-            //BlobCounter microBlobCounter = new BlobCounter();
-            //microBlobCounter.ProcessImage(tBimage);
-            //nBlobs = microBlobCounter.ObjectsCount;
+            AForge.Imaging.BlobCounter microBlobCounter = new AForge.Imaging.BlobCounter();
+            microBlobCounter.ProcessImage(tBimage);
+            nBlobs = microBlobCounter.ObjectsCount;
             ////wrBitmap.DrawRectangle(aimedRectangle.Left, aimedRectangle.Top, aimedRectangle.Right, aimedRectangle.Bottom,Windows.UI.Color.FromArgb(255,255,0,100));
 
             ////setBackImage(nev.Image.ToManagedImage());
-            //areaText.Text = string.Format("{0:0.##}", area);
-            //gravityCenterText.Text = "X:" + string.Format("{0:0.##}", center.X) + " Y:" + string.Format("{0:0.##}", center.Y);
-            //colorDeviationText.Text = string.Format("{0:0.##}", colorDeviation);
-            //innerBlobsText.Text = string.Format("{0:0.##}", nBlobs);
-            //writeInfo("File: " + file.Name + "\nNevus area: " + area + "\nNevus gravity center: " + gravityCenterText.Text + "\nColor Deviation: " + colorDeviation + "\nInner Blobs: " + nBlobs);
-            //var R = new Windows.UI.Xaml.Shapes.Rectangle();
-            //R.Height = tBimage.Height+50;
-            //R.Width = tBimage.Width+50;
-            ////R.Margin = new Windows.UI.Xaml.Thickness(aimedRectangle.Left, aimedRectangle.Top, aimedRectangle.Right, aimedRectangle.Bottom);
-            //R.Stroke = new SolidColorBrush(Colors.Red);
-            //R.StrokeThickness = 3;
-            //R.Fill = new SolidColorBrush(Colors.Transparent);
-            //Canvas.SetLeft(R, -R.Width/2 + R.Width * scale);
-            //Canvas.SetTop(R, -R.Height/2);
-            //infoCanvas.Children.Add(R);
+            areaText.Text = string.Format("{0:0.##}", area);
+            gravityCenterText.Text = "X:" + string.Format("{0:0.##}", center.X) + " Y:" + string.Format("{0:0.##}", center.Y);
+            colorDeviationText.Text = string.Format("{0:0.##}", colorDeviation);
+            innerBlobsText.Text = string.Format("{0:0.##}", nBlobs);
+            writeInfo("File: " + file.Name + "\nNevus area: " + area + "\nNevus gravity center: " + gravityCenterText.Text + "\nColor Deviation: " + colorDeviation + "\nInner Blobs: " + nBlobs);
+            var R = new Windows.UI.Xaml.Shapes.Rectangle();
+            R.Height = tBimage.Height+50;
+            R.Width = tBimage.Width+50;
+            //R.Margin = new Windows.UI.Xaml.Thickness(aimedRectangle.Left, aimedRectangle.Top, aimedRectangle.Right, aimedRectangle.Bottom);
+            R.Stroke = new SolidColorBrush(Colors.Red);
+            R.StrokeThickness = 3;
+            R.Fill = new SolidColorBrush(Colors.Transparent);
+            Canvas.SetLeft(R, -R.Width/2 + R.Width * scale);
+            Canvas.SetTop(R, -R.Height/2);
+            infoCanvas.Children.Add(R);
             //setBackImage(tBimage);
-            return tBimage;
+            return tColorImage;
         }
 
         private Rectangle getMaxRectangle(Rectangle[] rects, int index, int imageWidth, int imageHeight)
@@ -426,6 +429,11 @@ namespace MySkin
         private void setBackImage(BitmapImage image)
         {
             dispImage.Source = image;
+        }
+
+        private void setMainImage(Bitmap image)
+        {
+            mainImage.Source = (BitmapSource)image;
         }
 
         private void setMainImage(WriteableBitmap image)
@@ -605,11 +613,12 @@ namespace MySkin
         {
             if (pixelData != null)
             {
-                mainImage.Source = null;
-                WriteableBitmap gray = await process(pixelData);
+                //mainImage.Source = null;
+                //WriteableBitmap gray = await process(pixelData);
                 //Bitmap test = await WritableBitmapToBitmap(gray);
-                //Bitmap test1 = analyzeBlobs(test);
+                Bitmap test1 = analyzeBlobs(Bimage);
                 //setBackImage(test1);
+                setMainImage(test1);
                 //setBackImage(gray);
             }
         }

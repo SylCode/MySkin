@@ -17,6 +17,8 @@ namespace MySkin
             height = h;
         }
 
+
+
         public byte[] Binary(byte[] pixelData, int low, int threshold)
         {
             byte[] binary = new byte[pixelData.Length];
