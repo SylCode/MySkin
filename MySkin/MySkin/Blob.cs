@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace MySkin
 {
@@ -41,7 +42,7 @@ namespace MySkin
     public class Blob
     {
         // blob's image
-        private UnmanagedImage image;
+        private WriteableBitmap image;
         // blob's image size - as original image or not
         private bool originalSize = false;
 
@@ -68,7 +69,7 @@ namespace MySkin
         /// the image may be extracted using <see cref="BlobCounterBase.ExtractBlobsImage( Bitmap, Blob, bool )"/>
         /// or <see cref="BlobCounterBase.ExtractBlobsImage( UnmanagedImage, Blob, bool )"/> method.</para></remarks>
         ///
-        public UnmanagedImage Image
+        public WriteableBitmap Image
         {
             get { return image; }
             internal set { image = value; }

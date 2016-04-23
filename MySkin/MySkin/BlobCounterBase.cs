@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
@@ -339,7 +340,7 @@ namespace MySkin
         /// <exception cref="InvalidImagePropertiesException">Thrown by some inherited classes if some image property other
         /// than the pixel format is not supported. See that class's documentation or the exception message for details.</exception>
         /// 
-        private byte[] getPixelData(WriteableBitmap image)
+        public byte[] getPixelData(WriteableBitmap image)
         {
             byte[] pix = new byte[image.PixelWidth * image.PixelHeight * 4];
 
@@ -357,7 +358,7 @@ namespace MySkin
 
             byte[] imageData = getPixelData(image);
             // do actual objects map building
-            BuildObjectsMap(imageData);
+            BuildObjectsMap(image);
 
             // collect information about blobs
             CollectObjectsInfo(imageData);
@@ -562,21 +563,30 @@ namespace MySkin
         /// <exception cref="ApplicationException">No image was processed before, so objects
         /// can not be collected.</exception>
         /// 
-        public Blob[] GetObjects(Bitmap image, bool extractInOriginalSize)
-        {
-            Blob[] blobs = null;
-            // lock source bitmap data
+        //public Blob[] GetObjects(byte[] imageData, bool extractInOriginalSize)
+        //{
+        //    Blob[] blobs = null;
+        //    // lock source bitmap data
 
-            try
-            {
-                // process image
-                blobs = GetObjects(new WriteableBitmap(imageData), extractInOriginalSize);
-            }
-            finally
-            {
-            }
-            return blobs;
-        }
+        //    try
+        //    {
+        //        // process image
+        //        blobs = GetObjects(writeBitmap(, extractInOriginalSize);
+        //    }
+        //    finally
+        //    {
+        //    }
+        //    return blobs;
+        //}
+
+        //private async WriteableBitmap writeBitmap(WriteableBitmap bitmap, byte[] pixelData)
+        //{
+        //    WriteableBitmap bmp;
+        //    using (Stream stream = bitmap.PixelBuffer.AsStream())
+        //    {
+        //        await stream.WriteAsync(pixelData, 0, pixelData.Length);
+        //    }
+        //}
 
         /// <summary>
         /// Get blobs.
@@ -645,42 +655,46 @@ namespace MySkin
                 src = getPixelData(image);
                 dst = getPixelData(dstImage);
                 int p = ymin * width + xmin;
+                int index = p*pixelSize;
 
-                if (extractInOriginalSize)
-                {
-                    // allign destination pointer also
-                    dst += ymin * dstImage.Stride + xmin * pixelSize;
-                }
+                //if (extractInOriginalSize)
+                //{
+                //    // allign destination pointer also
+                //    dst += ymin + xmin * pixelSize;
+                //}
 
-                int srcOffset = srcStride - objectWidth * pixelSize;
-                int dstOffset = dstImage.Stride - objectWidth * pixelSize;
+                //int srcOffset = srcStride - objectWidth * pixelSize;
+                //int dstOffset = dstImage.Stride - objectWidth * pixelSize;
                 int labelsOffset = width - objectWidth;
 
                 // for each line
                 for (int y = ymin; y <= ymax; y++)
                 {
                     // copy each pixel
-                    for (int x = xmin; x <= xmax; x++, p++, dst += pixelSize, src += pixelSize)
+                    for (int x = xmin; x <= xmax; x++, p++, index += pixelSize/*, dst += pixelSize, src += pixelSize*/)
                     {
                         if (objectLabels[p] == label)
                         {
                             // copy pixel
-                            *dst = *src;
+                            dst[index] = src[index];
+                            dst[index + 1] = src[index + 1];
+                            dst[index + 2] = src[index + 2];
+                            dst[index + 3] = src[index + 3];
 
-                            if (pixelSize > 1)
-                            {
-                                dst[1] = src[1];
-                                dst[2] = src[2];
+                            //if (pixelSize > 1)
+                            //{
+                            //    dst[1] = src[1];
+                            //    dst[2] = src[2];
 
-                                if (pixelSize > 3)
-                                {
-                                    dst[3] = src[3];
-                                }
-                            }
+                            //    if (pixelSize > 3)
+                            //    {
+                            //        dst[3] = src[3];
+                            //    }
+                            //}
                         }
                     }
-                    src += srcOffset;
-                    dst += dstOffset;
+                    //src += srcOffset;
+                    //dst += dstOffset;
                     p += labelsOffset;
                 }
 
@@ -716,24 +730,22 @@ namespace MySkin
         /// <exception cref="ApplicationException">No image was processed before, so blob
         /// can not be extracted.</exception>
         /// 
-        public void ExtractBlobsImage(Bitmap image, Blob blob, bool extractInOriginalSize)
-        {
-            // lock source bitmap data
-            BitmapData imageData = image.LockBits(
-                new Rectangle(0, 0, image.Width, image.Height),
-                ImageLockMode.ReadOnly, image.PixelFormat);
+        //public void ExtractBlobsImage(WriteableBitmap image, Blob blob, bool extractInOriginalSize)
+        //{
+        //    // lock source bitmap data
+        //    //BitmapData imageData = image.LockBits(
+        //    //    new Rectangle(0, 0, image.Width, image.Height),
+        //    //    ImageLockMode.ReadOnly, image.PixelFormat);
 
-            try
-            {
-                // process image
-                ExtractBlobsImage(new WriteableBitmap(imageData), blob, extractInOriginalSize);
-            }
-            finally
-            {
-                // unlock source images
-                image.UnlockBits(imageData);
-            }
-        }
+        //    try
+        //    {
+        //        // process image
+        //        ExtractBlobsImage(image, blob, extractInOriginalSize);
+        //    }
+        //    finally
+        //    {
+        //    }
+        //}
 
         /// <summary>
         /// Extract blob's image.
@@ -765,20 +777,20 @@ namespace MySkin
             if (objectLabels == null)
                 throw new InvalidOperationException("Image should be processed before to collect objects map.");
 
-            if ((image.PixelFormat != PixelFormat.Format24bppRgb) &&
-                (image.PixelFormat != PixelFormat.Format8bppIndexed) &&
-                (image.PixelFormat != PixelFormat.Format32bppRgb) &&
-                (image.PixelFormat != PixelFormat.Format32bppArgb) &&
-                (image.PixelFormat != PixelFormat.Format32bppRgb) &&
-                (image.PixelFormat != PixelFormat.Format32bppPArgb)
-                )
-                throw new UnsupportedImageFormatException("Unsupported pixel format of the provided image.");
+            //if ((image.PixelFormat != PixelFormat.Format24bppRgb) &&
+            //    (image.PixelFormat != PixelFormat.Format8bppIndexed) &&
+            //    (image.PixelFormat != PixelFormat.Format32bppRgb) &&
+            //    (image.PixelFormat != PixelFormat.Format32bppArgb) &&
+            //    (image.PixelFormat != PixelFormat.Format32bppRgb) &&
+            //    (image.PixelFormat != PixelFormat.Format32bppPArgb)
+            //    )
+            //    throw new UnsupportedImageFormatException("Unsupported pixel format of the provided image.");
 
             // image size
-            int width = image.Width;
-            int height = image.Height;
-            int srcStride = image.Stride;
-            int pixelSize = Bitmap.GetPixelFormatSize(image.PixelFormat) / 8;
+            int width = image.PixelWidth;
+            int height = image.PixelHeight;
+            //int srcStride = image.Stride;
+            int pixelSize = 4 /*Bitmap.GetPixelFormatSize(image.PixelFormat) / 8*/;
 
             int objectWidth = blob.Rectangle.Width;
             int objectHeight = blob.Rectangle.Height;
@@ -794,54 +806,58 @@ namespace MySkin
             int label = blob.ID;
 
             // create new image
-            blob.Image = WriteableBitmap.Create(blobImageWidth, blobImageHeight, image.PixelFormat);
+            blob.Image = new WriteableBitmap(blobImageWidth, blobImageHeight);
             blob.OriginalSize = extractInOriginalSize;
 
             // copy image
-            unsafe
+            //unsafe
+            //{
+            byte[] src = getPixelData(image);
+            byte[] dst = getPixelData(image);
+            int p = ymin * width + xmin;
+            int index = p;
+
+            //if (extractInOriginalSize)
+            //{
+            //    // allign destination pointer also
+            //    dst += ymin + xmin * pixelSize;
+            //}
+
+            //int srcOffset = srcStride - objectWidth * pixelSize;
+            //int dstOffset = blob.Image.Stride - objectWidth * pixelSize;
+            int labelsOffset = width - objectWidth;
+
+            // for each line
+            for (int y = ymin; y <= ymax; y++)
             {
-                byte* src = (byte*)image.ImageData.ToPointer() + ymin * srcStride + xmin * pixelSize;
-                byte* dst = (byte*)blob.Image.ImageData.ToPointer();
-                int p = ymin * width + xmin;
-
-                if (extractInOriginalSize)
+                // copy each pixel
+                for (int x = xmin; x <= xmax; x++, p++, index+= pixelSize /*dst += pixelSize, src += pixelSize*/)
                 {
-                    // allign destination pointer also
-                    dst += ymin * blob.Image.Stride + xmin * pixelSize;
-                }
-
-                int srcOffset = srcStride - objectWidth * pixelSize;
-                int dstOffset = blob.Image.Stride - objectWidth * pixelSize;
-                int labelsOffset = width - objectWidth;
-
-                // for each line
-                for (int y = ymin; y <= ymax; y++)
-                {
-                    // copy each pixel
-                    for (int x = xmin; x <= xmax; x++, p++, dst += pixelSize, src += pixelSize)
+                    if (objectLabels[p] == label)
                     {
-                        if (objectLabels[p] == label)
-                        {
-                            // copy pixel
-                            *dst = *src;
+                        // copy pixel
+                        dst[index] = src[index];
+                        dst[index + 1] = src[index + 1];
+                        dst[index + 2] = src[index + 2];
+                        dst[index + 3] = src[index + 3];
 
-                            if (pixelSize > 1)
-                            {
-                                dst[1] = src[1];
-                                dst[2] = src[2];
+                        //if (pixelSize > 1)
+                        //{
+                        //    dst[1] = src[1];
+                        //    dst[2] = src[2];
 
-                                if (pixelSize > 3)
-                                {
-                                    dst[3] = src[3];
-                                }
-                            }
-                        }
+                        //    if (pixelSize > 3)
+                        //    {
+                        //        dst[3] = src[3];
+                        //    }
+                        //}
                     }
-                    src += srcOffset;
-                    dst += dstOffset;
-                    p += labelsOffset;
                 }
+                //src += srcOffset;
+                //dst += dstOffset;
+                p += labelsOffset;
             }
+            //}
         }
 
         /// <summary>
@@ -864,14 +880,14 @@ namespace MySkin
         /// <exception cref="ApplicationException">No image was processed before, so blob
         /// can not be extracted.</exception>
         /// 
-        public void GetBlobsLeftAndRightEdges(Blob blob, out List<Point> leftEdge, out List<Point> rightEdge)
+        public void GetBlobsLeftAndRightEdges(Blob blob, out List<Windows.Foundation.Point> leftEdge, out List<Windows.Foundation.Point> rightEdge)
         {
             // check if objects map was collected
             if (objectLabels == null)
                 throw new InvalidOperationException("Image should be processed before to collect objects map.");
 
-            leftEdge = new List<Point>();
-            rightEdge = new List<Point>();
+            leftEdge = new List<Windows.Foundation.Point>();
+            rightEdge = new List<Windows.Foundation.Point>();
 
             int xmin = blob.Rectangle.Left;
             int xmax = xmin + blob.Rectangle.Width - 1;
@@ -889,7 +905,7 @@ namespace MySkin
                 {
                     if (objectLabels[p] == label)
                     {
-                        leftEdge.Add(new Point(x, y));
+                        leftEdge.Add(new Windows.Foundation.Point(x, y));
                         break;
                     }
                 }
@@ -900,7 +916,7 @@ namespace MySkin
                 {
                     if (objectLabels[p] == label)
                     {
-                        rightEdge.Add(new Point(x, y));
+                        rightEdge.Add(new Windows.Foundation.Point(x, y));
                         break;
                     }
                 }
@@ -927,14 +943,14 @@ namespace MySkin
         /// <exception cref="ApplicationException">No image was processed before, so blob
         /// can not be extracted.</exception>
         /// 
-        public void GetBlobsTopAndBottomEdges(Blob blob, out List<Point> topEdge, out List<Point> bottomEdge)
+        public void GetBlobsTopAndBottomEdges(Blob blob, out List<Windows.Foundation.Point> topEdge, out List<Windows.Foundation.Point> bottomEdge)
         {
             // check if objects map was collected
             if (objectLabels == null)
                 throw new InvalidOperationException("Image should be processed before to collect objects map.");
 
-            topEdge = new List<Point>();
-            bottomEdge = new List<Point>();
+            topEdge = new List<Windows.Foundation.Point>();
+            bottomEdge = new List<Windows.Foundation.Point>();
 
             int xmin = blob.Rectangle.Left;
             int xmax = xmin + blob.Rectangle.Width - 1;
@@ -952,7 +968,7 @@ namespace MySkin
                 {
                     if (objectLabels[p] == label)
                     {
-                        topEdge.Add(new Point(x, y));
+                        topEdge.Add(new Windows.Foundation.Point(x, y));
                         break;
                     }
                 }
@@ -963,7 +979,7 @@ namespace MySkin
                 {
                     if (objectLabels[p] == label)
                     {
-                        bottomEdge.Add(new Point(x, y));
+                        bottomEdge.Add(new Windows.Foundation.Point(x, y));
                         break;
                     }
                 }
@@ -991,13 +1007,13 @@ namespace MySkin
         /// <exception cref="ApplicationException">No image was processed before, so blob
         /// can not be extracted.</exception>
         /// 
-        public List<Point> GetBlobsEdgePoints(Blob blob)
+        public List<Windows.Foundation.Point> GetBlobsEdgePoints(Blob blob)
         {
             // check if objects map was collected
             if (objectLabels == null)
                 throw new InvalidOperationException("Image should be processed before to collect objects map.");
 
-            List<Point> edgePoints = new List<Point>();
+            List<Windows.Foundation.Point> edgePoints = new List<Windows.Foundation.Point>();
 
             int xmin = blob.Rectangle.Left;
             int xmax = xmin + blob.Rectangle.Width - 1;
@@ -1020,7 +1036,7 @@ namespace MySkin
                 {
                     if (objectLabels[p] == label)
                     {
-                        edgePoints.Add(new Point(x, y));
+                        edgePoints.Add(new Windows.Foundation.Point(x, y));
                         leftProcessedPoints[y - ymin] = x;
                         break;
                     }
@@ -1035,7 +1051,7 @@ namespace MySkin
                         // avoid adding the point we already have
                         if (leftProcessedPoints[y - ymin] != x)
                         {
-                            edgePoints.Add(new Point(x, y));
+                            edgePoints.Add(new Windows.Foundation.Point(x, y));
                         }
                         rightProcessedPoints[y - ymin] = x;
                         break;
@@ -1056,7 +1072,7 @@ namespace MySkin
                         if ((leftProcessedPoints[y0] != x) &&
                              (rightProcessedPoints[y0] != x))
                         {
-                            edgePoints.Add(new Point(x, y));
+                            edgePoints.Add(new Windows.Foundation.Point(x, y));
                         }
                         break;
                     }
@@ -1072,7 +1088,7 @@ namespace MySkin
                         if ((leftProcessedPoints[y0] != x) &&
                              (rightProcessedPoints[y0] != x))
                         {
-                            edgePoints.Add(new Point(x, y));
+                            edgePoints.Add(new Windows.Foundation.Point(x, y));
                         }
                         break;
                     }
@@ -1093,7 +1109,7 @@ namespace MySkin
         /// <see cref="imageWidth"/> and <see cref="imageHeight"/> members are initialized
         /// before the method is called, so these members may be used safely.</note></remarks>
         /// 
-        protected abstract void BuildObjectsMap(byte[] image);
+        protected abstract void BuildObjectsMap(WriteableBitmap image);
 
 
         #region Private Methods - Collecting objects' rectangles

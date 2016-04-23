@@ -4,7 +4,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.Foundation;
 using System.Collections.Generic;
 
-namespace MySkin
+namespace MySkin_Alpha
 {
     class ImageProc
     {

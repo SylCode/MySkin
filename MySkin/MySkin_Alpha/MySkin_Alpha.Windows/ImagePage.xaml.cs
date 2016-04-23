@@ -1,4 +1,4 @@
-﻿using MySkin.Common;
+﻿using MySkin_Alpha.Common;
 using System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -30,7 +30,7 @@ using Windows.UI.Popups;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
-namespace MySkin
+namespace MySkin_Alpha
 {
     /// <summary>
     /// A basic page that provides characteristics common to most applications.
@@ -125,7 +125,7 @@ namespace MySkin
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             navigationHelper.OnNavigatedFrom(e);
-            
+
         }
 
         #endregion
@@ -210,7 +210,7 @@ namespace MySkin
             double colorDeviation = 0.0f;
             System.Drawing.Color stDev;
 
-            AForge.Imaging.BlobCounter blobCounter = new AForge.Imaging.BlobCounter();
+            BlobCounter blobCounter = new BlobCounter();
             blobCounter.FilterBlobs = true;
             blobCounter.MinWidth = 20;
             blobCounter.MinHeight = 20;
@@ -300,11 +300,11 @@ namespace MySkin
             int index = 0;
             aimedRectangle = getMaxRectangle(blobCounter.GetObjectsRectangles(), index, tBimage.Width, tBimage.Height);
 
-            List<AForge.IntPoint> points = blobCounter.GetBlobsEdgePoints(blobCounter.GetObjectsInformation()[index]);
+            List<IntPoint> points = blobCounter.GetBlobsEdgePoints(blobCounter.GetObjectsInformation()[index]);
 
-            AForge.Imaging.Blob nev = blobCounter.GetObjectsInformation()[index];
+            Blob nev = blobCounter.GetObjectsInformation()[index];
             blobCounter.ExtractBlobsImage(tBimage, nev, true);
-            AForge.Point center = nev.CenterOfGravity;
+            Accord.Point center = nev.CenterOfGravity;
             area = nev.Area;
 
             stDev = nev.ColorStdDev; //nev.Image.ToManagedImage().StandardDeviation(nev.Image.ToManagedImage().Mean());
@@ -315,7 +315,7 @@ namespace MySkin
 
 
             tColorImage = crop.Apply(image);
-            AForge.Imaging.ImageStatistics stats = new AForge.Imaging.ImageStatistics(tColorImage);
+            ImageStatistics stats = new ImageStatistics(tColorImage);
             //Histogram red = stats.Red;
             //Histogram green = stats.Green;
             //Histogram blue = stats.Blue;
@@ -325,7 +325,7 @@ namespace MySkin
             //tBimage = crop.Apply(tBimage);
 
             //colorDeviation = (red.StdDev + green.StdDev + blue.StdDev) / 3;
-            AForge.Imaging.BlobCounter microBlobCounter = new AForge.Imaging.BlobCounter();
+            BlobCounter microBlobCounter = new BlobCounter();
             microBlobCounter.ProcessImage(tBimage);
             nBlobs = microBlobCounter.ObjectsCount;
             ////wrBitmap.DrawRectangle(aimedRectangle.Left, aimedRectangle.Top, aimedRectangle.Right, aimedRectangle.Bottom,Windows.UI.Color.FromArgb(255,255,0,100));
@@ -403,12 +403,12 @@ namespace MySkin
 
         private async Task<StorageFile> saveImage(WriteableBitmap WB, string name)
         {
-            string FileName = name+".";
+            string FileName = name + ".";
             Guid BitmapEncoderGuid = BitmapEncoder.JpegEncoderId;
-            
+
             FileName += "bmp";
             BitmapEncoderGuid = BitmapEncoder.BmpEncoderId;
-                   
+
             var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(FileName, CreationCollisionOption.GenerateUniqueName);
             using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
@@ -533,7 +533,7 @@ namespace MySkin
             gray = processor.Grayscale(gray);
             //byte[] edge = processor.Edge(gray, Mask.Robinson3x3Horizontal, Mask.Robinson3x3Vertical);
             List<double[,]> mask = selectMask();
-            byte[] edgeGen,edgeLoc;
+            byte[] edgeGen, edgeLoc;
             //if (mask.Count == 1)
             //    edge = processor.Edge(gray, mask[0], factorSlider.Value, Convert.ToInt32(biasSlider.Value));
             //else
@@ -563,8 +563,8 @@ namespace MySkin
             blobCounter.FilterBlobs = true;
             blobCounter.MinWidth = 70;
             blobCounter.MinHeight = 70;
-            blobCounter.MaxHeight =(int)height-10;
-            blobCounter.MaxWidth = (int)width-10;
+            blobCounter.MaxHeight = (int)height - 10;
+            blobCounter.MaxWidth = (int)width - 10;
             //blobCounter.BackgroundThreshold = System.Drawing.Color.FromArgb(255,threshold,threshold,threshold);
             blobCounter.ProcessImage(segmentImage);
 
@@ -683,7 +683,7 @@ namespace MySkin
             }
             return masks;
         }
-        
+
 
         #endregion
 
