@@ -1,162 +1,83 @@
-﻿using MySkin_Alpha.Common;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Windows.Media.Capture;
+using Windows.Media.MediaProperties;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using Windows.Storage;
-using Windows.Storage.Pickers;
-using Windows.Media.Capture;
-using Windows.ApplicationModel.Activation;
-using Windows.Graphics.Display;
-using Windows.Devices.Sensors;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.Media.MediaProperties;
+using Windows.UI.Xaml.Navigation;
+using Windows.Devices.Sensors;
+using Windows.System.Display;
+using Windows.Graphics.Display;
+using Windows.Storage.FileProperties;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 using Windows.Graphics.Imaging;
-using Windows.Storage.FileProperties;
-using Windows.Foundation;
 using Windows.Media.Devices;
-using Windows.System.Display;
+using Windows.Storage.Pickers;
+using Windows.ApplicationModel.Activation;
 
-// The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
+// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
 
 namespace MySkin_Alpha
 {
     /// <summary>
-    /// A basic page that provides characteristics common to most applications.
+    /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
+    /// 
+    public class NevParams
+    {
+        public Size captureElementSize;
+        public StorageFile file;
+        public double interLine;
+    }
     public sealed partial class MainPage : Page
     {
-        public static MainPage Current;
-        private NavigationHelper navigationHelper;
-        private ObservableDictionary defaultViewModel = new ObservableDictionary();
         public MediaCapture MyMediaCapture { get; private set; }
         private readonly DisplayInformation displayInformation = DisplayInformation.GetForCurrentView();
-        private DisplayOrientations displayOrientation = DisplayOrientations.Portrait;
+        private DisplayOrientations displayOrientation = DisplayOrientations.LandscapeFlipped;
         private readonly SimpleOrientationSensor orientationSensor = SimpleOrientationSensor.GetDefault();
-        private SimpleOrientation deviceOrientation = SimpleOrientation.NotRotated;
+        private SimpleOrientation deviceOrientation = SimpleOrientation.Rotated270DegreesCounterclockwise;
         private static readonly Guid RotationKey = new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1");
         private bool externalCamera;
         private bool mirroringPreview;
         BitmapImage bit = new BitmapImage();
         string filename = "Mole_";
         bool isPreviewing = false;
-
-        /// <summary>
-        /// This can be changed to a strongly typed view model.
-        /// </summary>
-        public ObservableDictionary DefaultViewModel
-        {
-            get { return this.defaultViewModel; }
-        }
-
-        /// <summary>
-        /// NavigationHelper is used on each page to aid in navigation and 
-        /// process lifetime management
-        /// </summary>
-        public NavigationHelper NavigationHelper
-        {
-            get { return this.navigationHelper; }
-        }
-
-
         public MainPage()
         {
             this.InitializeComponent();
-            this.navigationHelper = new NavigationHelper(this);
-            this.navigationHelper.LoadState += navigationHelper_LoadState;
-            this.navigationHelper.SaveState += navigationHelper_SaveState;
             RegisterOrientationEventHandlers();
             InitCamera();
             this.NavigationCacheMode = NavigationCacheMode.Required;
-            Current = this;
         }
 
         /// <summary>
-        /// Populates the page with content passed during navigation. Any saved state is also
-        /// provided when recreating a page from a prior session.
+        /// Invoked when this page is about to be displayed in a Frame.
         /// </summary>
-        /// <param name="sender">
-        /// The source of the event; typically <see cref="Common.NavigationHelper"/>
-        /// </param>
-        /// <param name="e">Event data that provides both the navigation parameter passed to
-        /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested and
-        /// a dictionary of state preserved by this page during an earlier
-        /// session. The state will be null the first time a page is visited.</param>
-        private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
-        {
-        }
-
-        /// <summary>
-        /// Preserves state associated with this page in case the application is suspended or the
-        /// page is discarded from the navigation cache.  Values must conform to the serialization
-        /// requirements of <see cref="Common.SuspensionManager.SessionState"/>.
-        /// </summary>
-        /// <param name="sender">The source of the event; typically <see cref="Common.NavigationHelper"/></param>
-        /// <param name="e">Event data that provides an empty dictionary to be populated with
-        /// serializable state.</param>
-        private void navigationHelper_SaveState(object sender, SaveStateEventArgs e)
-        {
-        }
-
-        #region NavigationHelper registration
-
-        /// The methods provided in this section are simply used to allow
-        /// NavigationHelper to respond to the page's navigation methods.
-        /// 
-        /// Page specific logic should be placed in event handlers for the  
-        /// <see cref="Common.NavigationHelper.LoadState"/>
-        /// and <see cref="Common.NavigationHelper.SaveState"/>.
-        /// The navigation parameter is available in the LoadState method 
-        /// in addition to page state preserved during an earlier session.
-
+        /// <param name="e">Event data that describes how this page was reached.
+        /// This parameter is typically used to configure the page.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            navigationHelper.OnNavigatedTo(e);
+            InitCamera();
+            // TODO: Prepare page for display here.
+
+            // TODO: If your application contains multiple pages, ensure that you are
+            // handling the hardware Back button by registering for the
+            // Windows.Phone.UI.Input.HardwareButtons.BackPressed event.
+            // If you are using the NavigationHelper provided by some templates,
+            // this event is handled for you.
         }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            navigationHelper.OnNavigatedFrom(e);
-        }
-
-        #endregion
-
-        private void openButton_Click(object sender, RoutedEventArgs e)
-        {
-            FileOpenPicker openPicker = new FileOpenPicker();
-            openPicker.ViewMode = PickerViewMode.Thumbnail;
-            openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            openPicker.FileTypeFilter.Add(".jpg");
-            openPicker.FileTypeFilter.Add(".jpeg");
-            openPicker.FileTypeFilter.Add(".png");
-
-
-            openPicker.PickSingleFileAndContinue();
-        }
-
-        public async void ContinueFileOpenPicker(FileOpenPickerContinuationEventArgs args)
-        {
-            if (args.Files.Count > 0)
-            {
-                try
-                {
-                    StorageFile img = await StorageFile.GetFileFromPathAsync(args.Files[0].Path);
-                    if (img != null)
-                    {
-                        Frame.Navigate(typeof(ImagePage), img);
-                    }
-                }
-                finally
-                { }
-            }
-            else
-            {
-                //OutputTextBlock.Text = "Operation cancelled.";
-            }
-        }
-
         private readonly DisplayRequest displayRequest = new DisplayRequest();
 
         private async void InitCamera()
@@ -167,13 +88,13 @@ namespace MySkin_Alpha
             await MyMediaCapture.InitializeAsync();
             MyMediaCapture.SetPreviewRotation(ConvertSimpleOrientationToVideoRotation(deviceOrientation));
 
-            await MyMediaCapture.VideoDeviceController.SceneModeControl.SetValueAsync(CaptureSceneMode.Auto);
+            //await MyMediaCapture.VideoDeviceController.SceneModeControl.SetValueAsync(CaptureSceneMode.Auto);
 
             if (MyMediaCapture.VideoDeviceController.WhiteBalanceControl.Supported)
                 await MyMediaCapture.VideoDeviceController.WhiteBalanceControl.SetPresetAsync(ColorTemperaturePreset.Auto);
 
             if (MyMediaCapture.VideoDeviceController.IsoSpeedControl.Supported)
-                await MyMediaCapture.VideoDeviceController.IsoSpeedControl.SetAutoAsync();
+                await MyMediaCapture.VideoDeviceController.IsoSpeedControl.SetPresetAsync(IsoSpeedPreset.Auto);
 
             if (MyMediaCapture.VideoDeviceController.ExposureControl.Supported)
                 await MyMediaCapture.VideoDeviceController.ExposureControl.SetAutoAsync(true);
@@ -188,14 +109,7 @@ namespace MySkin_Alpha
             }
 
             if (MyMediaCapture.VideoDeviceController.FocusControl.Supported)
-                MyMediaCapture.VideoDeviceController.FocusControl.Configure(new FocusSettings
-                {
-                    AutoFocusRange = AutoFocusRange.Macro,
-                    Mode = FocusMode.Continuous,
-                    DisableDriverFallback = true,
-                    WaitForFocus = true,
-                    Distance = ManualFocusDistance.Nearest
-                });
+                await MyMediaCapture.VideoDeviceController.FocusControl.SetPresetAsync(FocusPreset.AutoMacro);
 
             //await MyMediaCapture.InitializeAsync(new MediaCaptureInitializationSettings
             //{
@@ -280,6 +194,8 @@ namespace MySkin_Alpha
 
         }
 
+        #region getters
+
         private SimpleOrientation GetCameraOrientation()
         {
 
@@ -295,7 +211,7 @@ namespace MySkin_Alpha
                         return SimpleOrientation.Rotated90DegreesCounterclockwise;
                 }
             }
-
+            
             return deviceOrientation;
         }
 
@@ -360,14 +276,15 @@ namespace MySkin_Alpha
                     return PhotoOrientation.Normal;
             }
         }
+        #endregion
 
-        private static async Task ReencodeAndSavePhotoAsync(IRandomAccessStream stream, string filename, PhotoOrientation photoOrientation)
+        private async Task ReencodeAndSavePhotoAsync(IRandomAccessStream stream, string filename, PhotoOrientation photoOrientation)
         {
             using (var inputStream = stream)
             {
                 var decoder = await BitmapDecoder.CreateAsync(inputStream);
 
-                var file = await KnownFolders.PicturesLibrary.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
+                StorageFile file = await KnownFolders.PicturesLibrary.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
 
                 using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
                 {
@@ -378,24 +295,31 @@ namespace MySkin_Alpha
                     await encoder.BitmapProperties.SetPropertiesAsync(properties);
                     await encoder.FlushAsync();
                 }
+                NevParams nevParams = new NevParams();
+                nevParams.file = file;
+                nevParams.captureElementSize = myCaptureElement.RenderSize;
+                nevParams.interLine = refLine2.Y1 - refLine1.Y1;
+                Frame.Navigate(typeof(ImagePage), nevParams);
             }
         }
+
+        
 
         private async Task TakePhotoAsync()
         {
             var stream = new InMemoryRandomAccessStream();
             if (MyMediaCapture.VideoDeviceController.FocusControl.Supported)
                 await MyMediaCapture.VideoDeviceController.FocusControl.FocusAsync();
-            try
-            {
+            //try
+            //{
                 await MyMediaCapture.CapturePhotoToStreamAsync(ImageEncodingProperties.CreateJpeg(), stream);
 
                 var photoOrientation = ConvertOrientationToPhotoOrientation(GetCameraOrientation());
                 await ReencodeAndSavePhotoAsync(stream, "photo.jpg", photoOrientation);
-            }
-            catch (Exception ex)
-            {
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //}
         }
 
         public async void SetResolution()
@@ -421,6 +345,30 @@ namespace MySkin_Alpha
             }
         }
 
+        private async void openButton_Click(object sender, RoutedEventArgs e)
+        {
+            FileOpenPicker fPicker = new FileOpenPicker();
+            fPicker.ViewMode = PickerViewMode.Thumbnail;
+            fPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            fPicker.FileTypeFilter.Add(".jpg");
+            fPicker.FileTypeFilter.Add(".jpeg");
+            fPicker.FileTypeFilter.Add(".bmp");
+
+            StorageFile img = await fPicker.PickSingleFileAsync();
+            if (img != null)
+            {
+
+                //if (navigationHelper.CanGoForward())
+                NevParams nevParams = new NevParams();
+                nevParams.file = img;
+                nevParams.captureElementSize = myCaptureElement.RenderSize;
+                nevParams.interLine = refLine2.Y1 - refLine1.Y1;
+                Frame.Navigate(typeof(ImagePage), nevParams);
+
+            }
+
+        }
+
         private async void captureButton_Click(object sender, RoutedEventArgs e)
         {
             await TakePhotoAsync();
@@ -433,5 +381,6 @@ namespace MySkin_Alpha
             //await MyMediaCapture.CapturePhotoToStreamAsync(props, stream);
 
         }
+       
     }
 }

@@ -47,15 +47,16 @@ namespace MySkin_Alpha
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-
+        NevParams par;
         private WriteableBitmap image, resizedImage;
         private Bitmap Bimage;
         private StorageFile file;
-        private Nevus nevus;
+        int originalWidth, originalHeigth;
         private byte[] pixelData;
         private ImageProc processor;
         uint width, height;
         double scale = 0.25;
+        double scaleFactor;
 
 
         #region base
@@ -122,9 +123,10 @@ namespace MySkin_Alpha
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            ProgressRing.IsActive = true;
             navigationHelper.OnNavigatedTo(e);
-            this.file = (StorageFile)e.Parameter;
-            LoadImage(file);
+            par = (NevParams)e.Parameter;
+            LoadImage(par.file);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -149,6 +151,8 @@ namespace MySkin_Alpha
             width = decoder.OrientedPixelWidth;
             height = decoder.OrientedPixelHeight;
             image = new WriteableBitmap(Convert.ToInt32(width), Convert.ToInt32(height));
+            originalWidth = image.PixelWidth;
+            originalHeigth = image.PixelHeight;
             imageData.Seek(0);
             await image.SetSourceAsync(imageData);
             int xL, yL, w, h;
@@ -174,6 +178,11 @@ namespace MySkin_Alpha
             //setMainImage(image);
         }
 
+        private double CalculateScaleFactor(double capWidth, Windows.Foundation.Size imageSize, double interLine)
+        {
+            double rel = 10.0/interLine;
+            return (rel/((double)imageSize.Width/ capWidth)/* * (double)interLine*/);
+        }
 
         private byte[] getPixelData(WriteableBitmap image)
         {
@@ -599,11 +608,17 @@ namespace MySkin_Alpha
                 //colorDeviation = nev.Image.StandardDeviation(nev.Image.Mean());
 
                 //nBlobs = microBlobCounter.ObjectsCount;
-                bitmap.DrawRectangle(aimedRectangle.Left, aimedRectangle.Top, aimedRectangle.Right, aimedRectangle.Bottom, Windows.UI.Color.FromArgb(255, 255, 0, 100));
+                scaleFactor = CalculateScaleFactor(par.captureElementSize.Width, new Windows.Foundation.Size(originalWidth, originalHeigth), par.interLine);
 
+                bitmap.DrawRectangle(aimedRectangle.Left, aimedRectangle.Top, aimedRectangle.Right, aimedRectangle.Bottom, Windows.UI.Color.FromArgb(255, 255, 0, 100));
+                double scaledArea = (aimedRectangle.Width * scaleFactor) * (aimedRectangle.Height * scaleFactor);
+                ProgressRing.IsActive = false;
                 ////setBackImage(nev.Image.ToManagedImage());
                 //areaText.Text = string.Format("{0:0.##}", area);
                 //gravityCenterText.Text = "X:" + string.Format("{0:0.##}", center.X) + " Y:" + string.Format("{0:0.##}", center.Y);
+                MessageDialog dialog = new MessageDialog("Area = " + string.Format("{0:0.##}", scaledArea) + " mm.");
+                await dialog.ShowAsync();
+                
             }
             else
             {
@@ -700,7 +715,7 @@ namespace MySkin_Alpha
         {
             if (pixelData != null)
             {
-                mainImage.Source = null;
+                //mainImage.Source = null;
                 WriteableBitmap gray = await process(pixelData);
                 //Bitmap test = await WritableBitmapToBitmap(gray);
                 //Bitmap test1 = analyzeBlobs(Bimage);

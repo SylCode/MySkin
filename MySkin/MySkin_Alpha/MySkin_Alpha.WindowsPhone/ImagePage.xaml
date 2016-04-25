@@ -8,34 +8,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <!--<Grid x:Name="LayoutRoot">
 
-        <Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <EntranceThemeTransition/>
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        -->
-    <!-- Title Panel -->
-    <!--
-        <StackPanel Grid.Row="0" Margin="19,0,0,0">
-            <TextBlock Text="MY APPLICATION" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,12,0,0"/>
-            <TextBlock Text="page title" Margin="0,-6.5,0,26.5" Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}"/>
-        </StackPanel>
-
-        -->
-    <!--TODO: Content should be placed within the following grid-->
-    <!--
-        <Grid Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
-
-        </Grid>
-    </Grid>-->
 
     <Page.Resources>
         <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
@@ -58,7 +31,6 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <!-- Back button and page title -->
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="46"/>
@@ -69,10 +41,9 @@
         </Grid>
         <Grid Grid.Row="1" Margin="0,2,0,-3">
             <Grid.ColumnDefinitions>
-                <!--<ColumnDefinition Width="3*"/>-->
                 <ColumnDefinition Width="328*"/>
-                <!--<ColumnDefinition Width="68*"/>-->
             </Grid.ColumnDefinitions>
+            <ProgressRing Name="ProgressRing" HorizontalAlignment="Center" VerticalAlignment="Center" Height="100" Width="100"/>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="0.5*"></RowDefinition>
@@ -96,43 +67,9 @@
                 </Grid>
             </Grid>
             <Image x:Name="mainImage" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-            <!--<Canvas x:Name="canvasLeft" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Column="0" VerticalAlignment="Center"/>-->
-            <Canvas x:Name="infoCanvas" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-            <!--<TextBlock x:Name="SuqareBlock" HorizontalAlignment="Left" Margin="18,18,0,0" TextWrapping="Wrap" Text="Area:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="areaText" HorizontalAlignment="Left" Margin="136,18,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy1" HorizontalAlignment="Left" Margin="18,42,0,0" TextWrapping="Wrap" Text="Gravity Center:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="gravityCenterText" HorizontalAlignment="Left" Margin="127,42,0,0" TextWrapping="Wrap" Text="X:0    Y:0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" Margin="18,123,0,0" TextWrapping="Wrap" Text="Color Deviation:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="colorDeviationText" HorizontalAlignment="Left" Margin="136,123,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy2" HorizontalAlignment="Left" Margin="18,147,0,0" TextWrapping="Wrap" Text="InnerBlobs:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="innerBlobsText" HorizontalAlignment="Left" Margin="136,147,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy3" HorizontalAlignment="Left" Margin="18,171,0,0" TextWrapping="Wrap" Text="Edges Count:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="edgesCountText" HorizontalAlignment="Left" Margin="136,171,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy4" HorizontalAlignment="Left" Margin="18,195,0,0" TextWrapping="Wrap" Text="Asymmetry:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="asymmetryText" HorizontalAlignment="Left" Margin="136,195,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy5" HorizontalAlignment="Left" Margin="18,219,0,0" TextWrapping="Wrap" Text="Border uneven:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="borderText" HorizontalAlignment="Left" Margin="136,219,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy6" HorizontalAlignment="Left" Margin="18,243,0,0" TextWrapping="Wrap" Text="Color uneven:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="unevenColorText" HorizontalAlignment="Left" Margin="136,243,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy7" HorizontalAlignment="Left" Margin="18,267,0,0" TextWrapping="Wrap" Text="Diameter:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="bigDiameterText" HorizontalAlignment="Left" Margin="136,267,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy8" HorizontalAlignment="Left" Margin="18,95,0,0" TextWrapping="Wrap" Text="Diameter mm." VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="diameterText" HorizontalAlignment="Left" Margin="136,95,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>-->
-            <!--<Image x:Name="hist" Grid.Column="0"  HorizontalAlignment="Left" Height="183" Margin="0,379,0,-36" VerticalAlignment="Top" Width="241" Grid.ColumnSpan="2"/>-->
-            <!--<ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="10.667,379,0,0" VerticalAlignment="Top" Width="204" Grid.Column="1" Height="57">
-                <ComboBoxItem Tag="SO3">Sobel 3x3 VH</ComboBoxItem>
-                <ComboBoxItem Tag="KI3">Kirsch 3x3 VH</ComboBoxItem>
-                <ComboBoxItem Tag="RO3">Robinson 3x3 VH</ComboBoxItem>
-                <ComboBoxItem Tag="LA5">Laplassian 5x5</ComboBoxItem>
-                <ComboBoxItem Tag="LOG5">LaplacianOfGaussian 5x5</ComboBoxItem>
-                <ComboBoxItem Tag="GA3" IsSelected="True">Gaussian 3x3</ComboBoxItem>
-                <ComboBoxItem Tag="GA5_1">Gaussian 5x5 v1</ComboBoxItem>
-                <ComboBoxItem Tag="GA5_2">Gaussian 5x5 v2</ComboBoxItem>
-            </ComboBox>
-            <Slider x:Name="factorSlider" HorizontalAlignment="Left" Margin="10.667,432,0,0" VerticalAlignment="Top" Width="204" Height="46" Minimum="0.01" Maximum="1" StepFrequency="0.01" Value="0.2" Grid.Column="1"/>
-            <Slider x:Name="biasSlider" HorizontalAlignment="Left" Margin="10.667,491,0,-11" VerticalAlignment="Top" Width="204" Height="46" Minimum="0" Maximum="20" Grid.Column="1"/>
-            <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10.667,431,0,0" TextWrapping="Wrap" Text="Factor" VerticalAlignment="Top" Grid.Column="1" Height="79" Width="6"/>
-            <TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="10.667,488,0,-2" TextWrapping="Wrap" Text="Bias" VerticalAlignment="Top" Grid.Column="1" Height="40" Width="6"/>-->
+            <Canvas x:Name="infoCanvas" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+          
+            </Canvas>
 
         </Grid>
     </Grid>

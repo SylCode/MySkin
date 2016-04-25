@@ -26,6 +26,9 @@ using System.Drawing;
 using Accord.Statistics.Visualizations;
 using Accord;
 using Windows.UI.Popups;
+using Windows.Devices.Enumeration;
+using Windows.UI.Xaml;
+using Windows.Graphics.Display;
 
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
@@ -35,12 +38,19 @@ namespace MySkin_Alpha
     /// <summary>
     /// A basic page that provides characteristics common to most applications.
     /// </summary>
+    /// 
+    //public class NevParams
+    //{
+    //    public Size captureElementSize;
+    //    public StorageFile file;
+    //}
     public sealed partial class ImagePage : Page
     {
 
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
+        NevParams par;
         private WriteableBitmap image, resizedImage;
         private Bitmap Bimage;
         private StorageFile file;
@@ -48,7 +58,9 @@ namespace MySkin_Alpha
         private byte[] pixelData;
         private ImageProc processor;
         uint width, height;
+        int originalWidth, originalHeigth;
         double scale = 0.25;
+        double scaleFactor;
         /// <summary>
         /// This can be changed to a strongly typed view model.
         /// </summary>
@@ -88,6 +100,33 @@ namespace MySkin_Alpha
         /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested and
         /// a dictionary of state preserved by this page during an earlier
         /// session. The state will be null the first time a page is visited.</param>
+        /// 
+        #endregion
+
+
+        #region NavigationHelper registration
+
+        /// The methods provided in this section are simply used to allow
+        /// NavigationHelper to respond to the page's navigation methods.
+        /// 
+        /// Page specific logic should be placed in event handlers for the  
+        /// <see cref="Common.NavigationHelper.LoadState"/>
+        /// and <see cref="Common.NavigationHelper.SaveState"/>.
+        /// The navigation parameter is available in the LoadState method 
+        /// in addition to page state preserved during an earlier session.
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            navigationHelper.OnNavigatedTo(e);
+            par = (NevParams)e.Parameter;
+            LoadImage(par.file);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            navigationHelper.OnNavigatedFrom(e);
+
+        }
         private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
         }
@@ -104,32 +143,9 @@ namespace MySkin_Alpha
         {
         }
 
-        #region NavigationHelper registration
-
-        /// The methods provided in this section are simply used to allow
-        /// NavigationHelper to respond to the page's navigation methods.
-        /// 
-        /// Page specific logic should be placed in event handlers for the  
-        /// <see cref="Common.NavigationHelper.LoadState"/>
-        /// and <see cref="Common.NavigationHelper.SaveState"/>.
-        /// The navigation parameter is available in the LoadState method 
-        /// in addition to page state preserved during an earlier session.
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            navigationHelper.OnNavigatedTo(e);
-            this.file = (StorageFile)e.Parameter;
-            LoadImage(file);
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            navigationHelper.OnNavigatedFrom(e);
-
-        }
-
         #endregion
-        #endregion
+
+        #region Init
 
         private async void LoadImage(StorageFile file)
         {
@@ -142,6 +158,8 @@ namespace MySkin_Alpha
             width = decoder.OrientedPixelWidth;
             height = decoder.OrientedPixelHeight;
             image = new WriteableBitmap(Convert.ToInt32(width), Convert.ToInt32(height));
+            originalWidth = image.PixelWidth;
+            originalHeigth = image.PixelHeight;
             imageData.Seek(0);
             await image.SetSourceAsync(imageData);
             int xL, yL, w, h;
@@ -179,6 +197,11 @@ namespace MySkin_Alpha
             return pix;
         }
 
+        private double CalculateScaleFactor(double capWidth,Size imageSize, double interLine)
+        {
+            return capWidth / (double)imageSize.Width;
+        }
+
         private async System.Threading.Tasks.Task<Bitmap> getBitmapFromFile(StorageFile file)
         {
             Bitmap bitmap;
@@ -200,6 +223,7 @@ namespace MySkin_Alpha
             }
             return im;
         }
+        #endregion
 
         #region Aforge_proc
         private Bitmap analyzeBlobs(Bitmap image)
@@ -593,7 +617,9 @@ namespace MySkin_Alpha
                 bitmap.DrawRectangle(aimedRectangle.Left, aimedRectangle.Top, aimedRectangle.Right, aimedRectangle.Bottom, Windows.UI.Color.FromArgb(255, 255, 0, 100));
 
                 ////setBackImage(nev.Image.ToManagedImage());
-                areaText.Text = string.Format("{0:0.##}", area);
+
+                scaleFactor = CalculateScaleFactor(par.captureElementSize.Width, new Size(originalWidth, originalHeigth), par.interLine);
+                areaText.Text = string.Format("{0:0.##}", nev.Area*scaleFactor);
                 gravityCenterText.Text = "X:" + string.Format("{0:0.##}", center.X) + " Y:" + string.Format("{0:0.##}", center.Y);
             }
             else
@@ -683,6 +709,16 @@ namespace MySkin_Alpha
             }
             return masks;
         }
+
+        //public double getNevusSize(Rectangle boundingRectangle)
+        //{
+        //    //double w = Window.Current.Bounds.Width;
+        //    //double h = Window.Current.Bounds.Height;
+        //    //DisplayInformation info = DisplayInformation.GetForCurrentView();
+        //    //double lDPI = info.LogicalDpi;
+        //    //double scaleFactor;
+        //    return (boundingRectangle.Width * boundingRectangle.Height) * scaleFactor;
+        //}
 
 
         #endregion

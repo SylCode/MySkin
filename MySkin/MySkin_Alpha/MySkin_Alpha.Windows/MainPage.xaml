@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+
     <Page.Resources>
         <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
         <x:String x:Key="AppName">MySkin</x:String>
@@ -19,6 +20,11 @@
 
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="188*"/>
+            <ColumnDefinition Width="63*"/>
+            <ColumnDefinition Width="432*"/>
+        </Grid.ColumnDefinitions>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition/>
@@ -26,12 +32,14 @@
         </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="140"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="42*"/>
+            <RowDefinition Height="493*"/>
+            <RowDefinition Height="43*"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
         <!-- Back button and page title -->
-        <Grid>
+        <Grid Grid.ColumnSpan="3">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120"/>
@@ -45,29 +53,44 @@
                 </Button.RenderTransform>
             </Button>
         </Grid>
-        <Grid Grid.Row="1" Name="Second">
+        <Grid Grid.Row="1" Name="Second" Grid.ColumnSpan="3" Grid.RowSpan="3">
             <!--<Rectangle Grid.Row="1"  Fill="Gray" Opacity="0.2" VerticalAlignment="Center" Height="162" Width="162" RenderTransformOrigin="0.5,0.5">
                 <Rectangle.RenderTransform>
                     <CompositeTransform ScaleY="-1"/>
                 </Rectangle.RenderTransform>
             </Rectangle>-->
-            <CaptureElement Name="myCaptureElement" HorizontalAlignment="Center" Width="1346" Margin="10" Grid.Row="1"/>
+            <CaptureElement Name="myCaptureElement" HorizontalAlignment="Center" Width="1366"/>
             <Canvas VerticalAlignment="Center" Height="162" Width="162">
-                <Line X1="-115" Y1="115" X2="115" Y2="115" Stroke="Red" StrokeThickness="3" UseLayoutRounding="True">
+                <Line X1="-115" Y1="115" X2="115" Y2="115" Stroke="Red" StrokeThickness="2" UseLayoutRounding="True">
                     <Line.RenderTransform>
                         <CompositeTransform Rotation="-45"/>
                     </Line.RenderTransform>
                 </Line>
-                <Line X1="0" Y1="0" X2="162" Y2="162" Stroke="Red" StrokeThickness="3"></Line>
-                <Line X1="0" Y1="0" X2="162" Y2="0" Stroke="Red" StrokeThickness="3"></Line>
-                <Line X1="0" Y1="0" X2="0" Y2="162" Stroke="Red" StrokeThickness="3"></Line>
-                <Line X1="162" Y1="162" X2="0" Y2="162" Stroke="Red" StrokeThickness="3"></Line>
-                <Line X1="162" Y1="162" X2="162" Y2="0" Stroke="Red" StrokeThickness="3"></Line>
+                <Line X1="0" Y1="0" X2="162" Y2="162" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="0" Y1="0" X2="162" Y2="0" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="0" Y1="0" X2="0" Y2="162" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="162" Y1="162" X2="0" Y2="162" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="162" Y1="162" X2="162" Y2="0" Stroke="Red" StrokeThickness="2"></Line>
 
             </Canvas>
 
         </Grid>
+        <Grid Grid.Row="2" Grid.Column="1" Name="Meter" >
+            <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Line X1="50" Y1="50" X2="100" Y2="50" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="50" Y1="100" X2="100" Y2="100" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="50" Y1="150" X2="100" Y2="150" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="50" Y1="200" X2="100" Y2="200" Stroke="Red" StrokeThickness="2"></Line>
+                <Line Name ="refLine1" X1="50" Y1="250" X2="100" Y2="250" Stroke="Red" StrokeThickness="2"></Line>
+                <Line Name ="refLine2" X1="50" Y1="300" X2="100" Y2="300" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="50" Y1="350" X2="100" Y2="350" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="50" Y1="400" X2="100" Y2="400" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="50" Y1="450" X2="100" Y2="450" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="100" Y1="50" X2="100" Y2="450" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="50" Y1="50" X2="50" Y2="450" Stroke="Red" StrokeThickness="2"></Line>
+            </Canvas>
+        </Grid>
 
-        <Button x:Name="captureButton" Content="Capture" HorizontalAlignment="Center" Grid.Row="2" Click="captureButton_Click"/>
+        <Button x:Name="captureButton" Content="Capture" HorizontalAlignment="Center" Grid.Row="4" Click="captureButton_Click" Grid.Column="2" Margin="138,6,639,6" Height="38" Width="87"/>
     </Grid>
 </Page>

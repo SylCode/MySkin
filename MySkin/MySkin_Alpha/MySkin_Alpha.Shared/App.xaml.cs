@@ -27,10 +27,11 @@ namespace MySkin_Alpha
     /// </summary>
     /// 
 
-
     public sealed partial class App : Application
     {
+
 #if WINDOWS_PHONE_APP
+        ContinuationManager continuationManager;
         private TransitionCollection transitions;
 #endif
 
@@ -44,14 +45,6 @@ namespace MySkin_Alpha
             this.Suspending += this.OnSuspending;
         }
 
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-        {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
-        }
-
-#if WINDOWS_PHONE_APP
-        ContinuationManager continuationManager;
-#endif
         private Frame CreateRootFrame()
         {
             Frame rootFrame = Window.Current.Content as Frame;
@@ -72,25 +65,6 @@ namespace MySkin_Alpha
             }
 
             return rootFrame;
-        }
-
-        private async Task RestoreStatusAsync(ApplicationExecutionState previousExecutionState)
-        {
-            // Do not repeat app initialization when the Window already has content,
-            // just ensure that the window is active
-            if (previousExecutionState == ApplicationExecutionState.Terminated)
-            {
-                // Restore the saved session state only when appropriate
-                try
-                {
-                    await SuspensionManager.RestoreAsync();
-                }
-                catch (SuspensionManagerException)
-                {
-                    //Something went wrong restoring state.
-                    //Assume there is no state and continue
-                }
-            }
         }
 
         /// <summary>
@@ -158,6 +132,24 @@ namespace MySkin_Alpha
             // Ensure the current window is active
             Window.Current.Activate();
         }
+        private async Task RestoreStatusAsync(ApplicationExecutionState previousExecutionState)
+        {
+            // Do not repeat app initialization when the Window already has content,
+            // just ensure that the window is active
+            if (previousExecutionState == ApplicationExecutionState.Terminated)
+            {
+                // Restore the saved session state only when appropriate
+                try
+                {
+                    await SuspensionManager.RestoreAsync();
+                }
+                catch (SuspensionManagerException)
+                {
+                    //Something went wrong restoring state.
+                    //Assume there is no state and continue
+                }
+            }
+        }
 
 #if WINDOWS_PHONE_APP
         /// <summary>
@@ -173,7 +165,7 @@ namespace MySkin_Alpha
             Frame rootFrame = CreateRootFrame();
             await RestoreStatusAsync(e.PreviousExecutionState);
 
-            if (rootFrame.Content == null)
+            if(rootFrame.Content == null)
             {
                 rootFrame.Navigate(typeof(MainPage));
             }
@@ -183,9 +175,9 @@ namespace MySkin_Alpha
             {
                 Frame scenarioFrame = MainPage.Current.FindName("ScenarioFrame") as Frame;
                 if (scenarioFrame != null)
-                {
+				{
                     // Call ContinuationManager to handle continuation activation
-                    continuationManager.Continue(continuationEventArgs, scenarioFrame);
+                    continuationManager.Continue(continuationEventArgs);
                 }
             }
 
@@ -207,6 +199,22 @@ namespace MySkin_Alpha
             rootFrame.Navigated -= this.RootFrame_FirstNavigated;
         }
 #endif
+        //protected async override void OnLaunched(LaunchActivatedEventArgs e)
+        //{
+        //    Frame rootFrame = CreateRootFrame();
+        //    await RestoreStatusAsync(e.PreviousExecutionState);
+
+        //    //MainPage is always in rootFrame so we don't have to worry about restoring the navigation state on resume
+        //    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+
+        //    // Ensure the current window is active
+        //    Window.Current.Activate();
+        //}
+
+        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        {
+            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+        }
 
         /// <summary>
         /// Invoked when application execution is being suspended.  Application state is saved
