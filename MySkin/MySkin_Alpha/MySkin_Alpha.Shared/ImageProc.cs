@@ -3,6 +3,8 @@ using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Foundation;
 using System.Collections.Generic;
+using System.Drawing;
+using Accord;
 
 namespace MySkin_Alpha
 {
@@ -10,6 +12,11 @@ namespace MySkin_Alpha
     {
         int width, height;
         private int calcOffset;
+        public double colorVariation = 0;
+        public double blackness = 0;
+        public double blueness = 0;
+        public double redness = 0;
+        public bool blueParts = false;
 
         public ImageProc(int w, int h)
         {
@@ -470,103 +477,208 @@ namespace MySkin_Alpha
             return output;
         }
 
-        public void/*List<Blob>*/ analyzeBlobs(byte[] gray,byte[] input, Point seed, int maxWidth, int maxHeight)
+        public byte[] analyzeBlob(byte[] gray,byte[] input, Rectangle boundingRectangle, List<IntPoint> pointsL, List<IntPoint> pointsR, List<IntPoint> pointsU, List<IntPoint> pointsD/*, out Nevus nevus*/)
         {
-            //List<Blob> blobs = new List<Blob>();
-            List <Point> uL, bR;
-            uL = new List<Point>();
-            bR = new List<Point>();
-            int xInit = (int)seed.X - maxWidth / 2;
-            int yInit = (int)seed.Y - maxHeight / 2;
-            List<Point> contour = new List<Point>();
-            int minW = 1000, maxW = -1, minH = 1000, maxH = -1, imageOffset = 0;
-            int beg = xInit * yInit * 4;
-            int end = (beg + maxWidth * maxHeight) * 4;
-            bool firstH=false, firstW=false;
+            int imageOffset = 0;
+            int d = 0;
+            byte[] fir = new byte[gray.Length];
+            byte[] sec = new byte[gray.Length];
+            byte[] final = new byte[gray.Length];
+            byte[] init = new byte[gray.Length];
+            List<double> blobPointColorsR = new List<double>();
+            List<double> blobPointColorsG = new List<double>();
+            List<double> blobPointColorsB = new List<double>();
 
-            
-
-            for (int y = yInit; y < yInit + maxHeight; y++)
+            for (int i=0; i<gray.Length; i++)
             {
-                for (int x = xInit; x < xInit + maxWidth; x++)
+                fir[i] = gray[i];
+                sec[i] = gray[i];
+                init[i] = gray[i];
+                final[i] = gray[i];
+            }
+
+            for (int i = 0; i < pointsL.Count; i++)
+            {
+                d = pointsL[i].X;
+                if (pointsL[i].Y == pointsR[i].Y)
                 {
-                    imageOffset = (y * width + x) * 4;
-                    if (input[imageOffset] <50 && input[imageOffset] > 0)
+                    while (d <= pointsR[i].X)
                     {
-                        gray[imageOffset] = 0;
-                        gray[imageOffset + 1] = 0;
-                        gray[imageOffset + 2] = 255;
-                        gray[imageOffset + 3] = 0;
+                        imageOffset = (pointsL[i].Y * width) * 4 + d * 4;
+                        if (input[imageOffset] < 50 && input[imageOffset] >= 0)
+                        {
+                            fir[imageOffset] = 0;
+                            fir[imageOffset + 1] = 0;
+                            fir[imageOffset + 2] = 255;
+                            fir[imageOffset + 3] = 255;
+                        }
+                        else if (input[imageOffset] < 170 && input[imageOffset] >= 0)
+                        {
+                            fir[imageOffset] = 255;
+                            fir[imageOffset + 1] = 0;
+                            fir[imageOffset + 2] = 0;
+                            fir[imageOffset + 3] = 255;
+                        }
+                        else if (input[imageOffset] < 235 && input[imageOffset] >= 0)
+                        {
+                            fir[imageOffset] = 0;
+                            fir[imageOffset + 1] = 255;
+                            fir[imageOffset + 2] = 0;
+                            fir[imageOffset + 3] = 255;
+                        }
+                        d++;
                     }
-                    else if (input[imageOffset] < 170 && input[imageOffset] > 0)
-                    {
-                        gray[imageOffset] = 255;
-                        gray[imageOffset + 1] = 0;
-                        gray[imageOffset + 2] = 0;
-                        gray[imageOffset + 3] = 0;
-                    }
-                    else if (input[imageOffset] < 235 && input[imageOffset] > 0)
-                    {
-                        gray[imageOffset] = 0;
-                        gray[imageOffset + 1] = 255;
-                        gray[imageOffset + 2] = 0;
-                        gray[imageOffset + 3] = 0;
-                    }
-                    //if (input[imageOffset] <= 235)
-                    //{
-                    //    int secondaryOffset = imageOffset;
-                    //    //while
-                    //}
+                }
 
+            }
 
+            int ct = 0;
+            for (int i = 0; i < pointsU.Count; i++)
+            {
+                d = pointsU[i].Y;
+                if (pointsU[i].X == pointsD[i].X)
+                {
+                    while (d <= pointsD[i].Y)
+                    {
+                        imageOffset = (d * width) * 4 + pointsU[i].X * 4;
+                        if (input[imageOffset] < 50 && input[imageOffset] >= 0)
+                        {
+                            sec[imageOffset] = 0;
+                            sec[imageOffset + 1] = 0;
+                            sec[imageOffset + 2] = 255;
+                            sec[imageOffset + 3] = 255;
+                        }
+                        else if (input[imageOffset] < 170 && input[imageOffset] >= 0)
+                        {
+                            sec[imageOffset] = 255;
+                            sec[imageOffset + 1] = 0;
+                            sec[imageOffset + 2] = 0;
+                            sec[imageOffset + 3] = 255;
+                        }
+                        else if (input[imageOffset] < 235 && input[imageOffset] >= 0)
+                        {
+                            sec[imageOffset] = 0;
+                            sec[imageOffset + 1] = 255;
+                            sec[imageOffset + 2] = 0;
+                            sec[imageOffset + 3] = 255;
+                        }
+                        d++;
+                    }
                 }
             }
 
-            
-
-            //int minWidth, minHeight, index;
-            //for (int i = 0; i < height; i++)
-            //{
-            //    for (int j = 0; j < width; j++)
-            //    {
-            //        if (input[i * width + j] == 255)
-            //        {
-            //            minWidth = j - (maxWidth / 2) >= 0 ? j - (maxWidth / 2) : 0;
-            //            minHeight = i - (maxHeight / 2) >= 0 ? j - (maxHeight / 2) : 0;
-            //            uL.Add(new Point(maxWidth, maxHeight));
-            //            bR.Add(new Point(minWidth, minHeight));
-            //            index = uL.Count - 1;
-            //            for (int h=minHeight; h<minHeight+maxHeight; h++)
-            //            {
-            //                for (int w = minWidth;w<minWidth+maxWidth; w++ )
-            //                {
-            //                    if (input[h * (minHeight + maxHeight) + w] == 255)
-            //                    {
-            //                        if (uL[index].X > w)
-            //                            uL[index] = new Point(w, uL[index].Y);
-            //                        if (uL[index].Y > h)
-            //                            uL[index] = new Point(uL[index].X, h);
-            //                        if (bR[index].X < w)
-            //                            bR[index] = new Point(w, bR[index].Y);
-            //                        if (bR[index].Y < h)
-            //                            bR[index] = new Point(bR[index].X, h);
-            //                    }
-            //                }
-            //            }
-            //        } 
-            //    }
-            //}
-
-            for (int i=0; i<uL.Count; i++)
+            for (int y = boundingRectangle.Y; y < boundingRectangle.Y + boundingRectangle.Height; y ++)
             {
-                //blobs.Add(new Blob(new Point(uL[i].X, uL[i].Y), new Point(bR[i].X, bR[i].Y)));
+                for (int x = boundingRectangle.X; x < boundingRectangle.X+ boundingRectangle.Width; x++)
+                {
+                    int i = (y * width + x) * 4;
+                    if (sec[i] == fir[i] && sec[i + 1] == fir[i + 1] && sec[i + 2] == fir[i + 2] && sec[i + 3] == fir[i + 3])
+                    {
+                        final[i] = init[i];
+                        final[i + 1] = init[i + 1];
+                        final[i + 2] = init[i + 2];
+                        final[i + 3] = init[i + 3];
+                        if (gray[i] <= 230 && gray[i + 1] <= 230 && gray[i + 2] <= 250)
+                        {
+                            blobPointColorsB.Add(gray[i]);
+                            blobPointColorsG.Add(gray[i + 1]);
+                            blobPointColorsR.Add(gray[i + 2]);
+
+
+
+                        }
+                    }
+                }
             }
-           
 
-            //return blobs;
+            for (int i = 0; i < pointsL.Count; i++)
+            {
+                imageOffset = (pointsL[i].Y * width) * 4 + pointsL[i].X * 4;
+                final[imageOffset] = 0;
+                final[imageOffset + 1] = 255;
+                final[imageOffset + 2] = 0;
+                final[imageOffset + 3] = 0;
+                imageOffset = (pointsR[i].Y * width) * 4 + pointsR[i].X * 4;
+                final[imageOffset] = 0;
+                final[imageOffset + 1] = 255;
+                final[imageOffset + 2] = 0;
+                final[imageOffset + 3] = 0;
+            }
+
+            for (int i = 0; i < pointsU.Count; i++)
+            {
+                imageOffset = (pointsU[i].Y * width) * 4 + pointsU[i].X * 4;
+                final[imageOffset] = 0;
+                final[imageOffset + 1] = 255;
+                final[imageOffset + 2] = 0;
+                final[imageOffset + 3] = 0;
+                imageOffset = (pointsD[i].Y * width) * 4 + pointsD[i].X * 4;
+                final[imageOffset] = 0;
+                final[imageOffset + 1] = 255;
+                final[imageOffset + 2] = 0;
+                final[imageOffset + 3] = 0;
+                d = pointsU[i].Y;
+
+                if (pointsU[i].X == pointsD[i].X)
+                {
+                    while (d <= pointsD[i].Y)
+                    {
+                        imageOffset = (d * width) * 4 + pointsU[i].X * 4;
+
+                        if (gray[imageOffset] <= 30 && gray[imageOffset + 1] <= 30 && gray[imageOffset + 2] <= 30)
+                        {
+                            blackness++;
+                        }
+                        if (Math.Abs(gray[imageOffset] - gray[imageOffset + 1]) <= 5 && Math.Abs(Math.Max(gray[imageOffset], gray[imageOffset + 1]) - gray[imageOffset + 2]) < 18)
+                        {
+                            blueness++;
+                            final[imageOffset] = 220;
+                            final[imageOffset + 1] = /*163*/0;
+                            final[imageOffset + 2] = /*73*/0;
+                            final[imageOffset + 3] = 255;
+                        }
+                        if (gray[imageOffset + 2] <= gray[imageOffset] || Math.Abs(gray[imageOffset] - gray[imageOffset + 2]) <= 10)
+                        {
+                            blueness++;
+                            final[imageOffset] = 220;
+                            final[imageOffset + 1] = 163;
+                            final[imageOffset + 2] = 73;
+                            final[imageOffset + 3] = 255;
+                        }
+                        if (gray[imageOffset] <= 40 && gray[imageOffset + 1] <= 40 && Math.Abs(gray[imageOffset] - gray[imageOffset + 1]) <= 10 && Math.Abs((Math.Max(gray[imageOffset], gray[imageOffset + 1]) + 1) / (gray[imageOffset + 2] + 1)) <= 0.3)
+                        {
+                            redness++;
+                            final[imageOffset] = 0;
+                            final[imageOffset + 1] = 0;
+                            final[imageOffset + 2] = 255;
+                            final[imageOffset + 3] = 255;
+                        }
+                        ct++;
+                        d++;
+                    }
+                }
+            }
+
+            if (blackness != 0)
+            {
+                blackness /= (double)ct;
+                blackness *= 100;
+            }
+            if (blueness != 0)
+            {
+                blueness /= (double)ct;
+                blueness *= 100;
+            }
+            if (redness != 0)
+            {
+                redness /= (double)ct;
+                redness *= 100;
+            }
+            colorVariation = (Accord.Statistics.Measures.Variance(blobPointColorsR.ToArray()) + Accord.Statistics.Measures.Variance(blobPointColorsG.ToArray()) + Accord.Statistics.Measures.Variance(blobPointColorsB.ToArray())) / 3.0;
+            //Nevus nev = new Nevus()
+
+
+            return final;
         }
-        
-
-
     }
 }

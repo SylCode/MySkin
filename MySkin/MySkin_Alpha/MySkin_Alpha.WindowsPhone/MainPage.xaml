@@ -47,7 +47,7 @@
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" />
         </Grid>
 
-        <!--<Frame x:Name="ScenarioFrame" Content="Frame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Grid.Row="1"/>-->
+        <Frame x:Name="ScenarioFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Grid.Row="1"/>
         <CaptureElement Name="myCaptureElement" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"/>
         <Grid Grid.Row="1" Name="Second" Grid.ColumnSpan="4" Grid.RowSpan="3">
             <Canvas VerticalAlignment="Center" Height="80" Width="80">

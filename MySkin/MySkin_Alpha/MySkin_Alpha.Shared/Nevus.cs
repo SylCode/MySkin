@@ -8,31 +8,44 @@ namespace MySkin_Alpha
 {
     class Nevus
     {
-        private bool asymmetric;
-        private bool unevenBorder;
-        private bool colorVariation;
-        private bool bigDiameter;
-        private bool evolutes;
+        public bool asymmetric { get;}
+        public bool unevenBorder { get;}
+        public bool bigDiameter { get; }
+        public bool unevenColor { get; }
+        public bool evolutes { get; set; }
+        public bool stiches { get; set; }
+        public bool lostHair { get; set; }
+        public bool bleeds { get; set; }
+        public bool blueParts { get; }
 
-        private int diameter, colorVariety, edgeCount, symetryDeviation;
+        public double area { get; }
+        public double colorVariation { get; }
+        public double borderVariation { get;}
+        public double blackness { get;}
+        public double blueness { get;}
+        public double redness { get;}
 
-        Nevus (int diam, int colorVar,int edgeCt, int symDev)
+        public int edgeCount { get; set; }
+
+        public Nevus (double area, double borderVariation, double colorVariation, double blackness, double blueness, double redness)
         {
-            diameter = diam;
-            colorVariety = colorVar;
-            edgeCount = edgeCt;
-            symetryDeviation = symDev;
-
-            asymmetric = false;
-            unevenBorder = false;
-            colorVariation = false;
-            bigDiameter = false;
-            evolutes = false;
+            this.area = area;
+            this.colorVariation = colorVariation;
+            this.borderVariation = borderVariation;
+            this.blackness = blackness;
+            this.blueness = blueness;
+            this.redness = redness;
+            if (area > 36)
+                this.bigDiameter = true;
+            if (colorVariation > 100)
+                unevenColor = true;
+            if (borderVariation > 20)
+                unevenBorder = true;
         }
 
-        public void analyze()
+        private void analyze()
         {
-
+            
         }
     }
 }

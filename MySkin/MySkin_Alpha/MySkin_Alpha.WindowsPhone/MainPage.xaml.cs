@@ -108,7 +108,7 @@ namespace MySkin_Alpha
         {
             base.OnNavigatedFrom(e);
             //await StopPreviewAsync();
-           // await CleanupCameraAsync();
+            //await CleanupCameraAsync();
 
         }
 
@@ -141,11 +141,11 @@ namespace MySkin_Alpha
             if (MyMediaCapture.VideoDeviceController.ExposureCompensationControl.Supported)
                 await MyMediaCapture.VideoDeviceController.ExposureCompensationControl.SetValueAsync(0);
 
-            //if (MyMediaCapture.VideoDeviceController.FlashControl.Supported)
-            //{
-            //    MyMediaCapture.VideoDeviceController.FlashControl.PowerPercent = 20;
-            //    MyMediaCapture.VideoDeviceController.FlashControl.Enabled = true;
-            //}
+            if (MyMediaCapture.VideoDeviceController.FlashControl.Supported)
+            {
+                //MyMediaCapture.VideoDeviceController.FlashControl.Auto = true;
+                //MyMediaCapture.VideoDeviceController.FlashControl.Enabled = true;
+            }
 
             if (MyMediaCapture.VideoDeviceController.FocusControl.Supported)
                 MyMediaCapture.VideoDeviceController.FocusControl.Configure(new FocusSettings
@@ -247,10 +247,8 @@ namespace MySkin_Alpha
             // Use the dispatcher because this method is sometimes called from non-UI threads
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                // Cleanup the UI
                 myCaptureElement.Source = null;
-
-                // Allow the device screen to sleep now that the preview is stopped
+                
                 displayRequest.RequestRelease();
             });
         }
@@ -260,12 +258,9 @@ namespace MySkin_Alpha
 
             if (isInitialized)
             {
-                // If a recording is in progress during cleanup, stop it to save the recording
 
                 if (isPreviewing)
                 {
-                    // The call to MediaCapture.Dispose() will automatically stop the preview
-                    // but manually stopping the preview is good practice
                     await StopPreviewAsync();
                 }
 

@@ -315,12 +315,13 @@ namespace MySkin_Alpha
             ////setBackImage(tBimage);
             blobCounter.ProcessImage(tBimage);
 
-            int index = 0;
-            aimedRectangle = getMaxRectangle(blobCounter.GetObjectsRectangles(), index, tBimage.Width, tBimage.Height);
+            int index = getMaxRectangle(blobCounter.GetObjectsRectangles(), tBimage.Width, tBimage.Height);
+            Blob nev = blobCounter.GetObjectsInformation()[index];
+            aimedRectangle = nev.Rectangle;
 
             List<IntPoint> points = blobCounter.GetBlobsEdgePoints(blobCounter.GetObjectsInformation()[index]);
 
-            Blob nev = blobCounter.GetObjectsInformation()[index];
+            
             blobCounter.ExtractBlobsImage(tBimage, nev, true);
             Accord.Point center = nev.CenterOfGravity;
             area = nev.Area;
@@ -368,38 +369,22 @@ namespace MySkin_Alpha
             return tColorImage;
         }
 
-        private Rectangle getMaxRectangle(Rectangle[] rects, int index, int imageWidth, int imageHeight)
+        private int getMaxRectangle(Rectangle[] rects, int imageWidth, int imageHeight)
         {
-            Rectangle maxRect = new Rectangle();
-            int max = 0, ct = 0;
+            int ct = 0, index = 0;
             float min = imageWidth * imageHeight;
             IntPoint p1 = new IntPoint(imageWidth / 2, imageHeight / 2);
-
-            //for (int i = 0; i < rects.Length - 1; i++)
-            //{
-            //    if (rects[i + 1].Height * rects[i + 1].Width > rects[i].Width * rects[i].Height)
-            //    {
-            //        Rectangle r = rects[i];
-            //        rects[i] = rects[i + 1];
-            //        rects[i + 1] = r;
-            //    }
-            //}
-
+            
             foreach (Rectangle rect in rects)
             {
-                if (rect.Height != imageWidth && rect.Width != imageHeight)
+                if (p1.DistanceTo(new IntPoint(rect.Center().X,rect.Center().Y)) < min)
                 {
-                    if (p1.DistanceTo(new IntPoint(rect.Left, rect.Top)) < min && rect.Width * rect.Height > max)
-                    {
-                        min = p1.DistanceTo(new IntPoint(rect.Left, rect.Top));
-                        maxRect = rect;
-                        index = ct;
-                        max = rect.Width * rect.Height;
-                    }
+                    min = p1.DistanceTo(new IntPoint(rect.Center().X, rect.Center().Y));
+                    index = ct;
                 }
                 ct++;
             }
-            return maxRect;
+            return index;
         }
 
         //private void dilate(Bitmap image, int iterations)
@@ -514,8 +499,8 @@ namespace MySkin_Alpha
         {
             WriteableBitmap bitmap, Contrast, BinaryGen, BinaryLoc, EdgeGen, EdgeLoc, Grayscale;
             Rectangle aimedRectangle = new Rectangle();
-            System.Drawing.Color stDev;
-            int area, nBlobs;
+            Nevus nevus;
+            int area;
             double colorDeviation = 0.0f;
 
             bitmap = new WriteableBitmap((int)width, (int)height);
@@ -526,138 +511,105 @@ namespace MySkin_Alpha
             EdgeLoc = new WriteableBitmap((int)width, (int)height);
             Grayscale = new WriteableBitmap((int)width, (int)height);
 
-            //if (image.PixelWidth > image.PixelHeight && image.PixelWidth > 640 && image.PixelHeight > 640)
-            //{
-            //    bitmap = new WriteableBitmap((int)width, (int)height);
-            //    Contrast = new WriteableBitmap((int)width, (int)height);
-            //    BinaryGen = new WriteableBitmap((int)width, (int)height);
-            //    BinaryLoc = new WriteableBitmap((int)width, (int)height);
-            //    EdgeGen = new WriteableBitmap((int)width, (int)height);
-            //    EdgeLoc = new WriteableBitmap((int)width, (int)height);
-            //    Grayscale = new WriteableBitmap((int)width, (int)height);
-            //}
-            //else
-            //{
-            //    bitmap = new WriteableBitmap(image.PixelHeight, image.PixelWidth);
-            //    Contrast = new WriteableBitmap((int)width, (int)height);
-            //    BinaryGen = new WriteableBitmap((int)width, (int)height);
-            //    BinaryLoc = new WriteableBitmap((int)width, (int)height);
-            //    EdgeGen = new WriteableBitmap((int)width, (int)height);
-            //    EdgeLoc = new WriteableBitmap((int)width, (int)height);
-            //    Grayscale = new WriteableBitmap((int)width, (int)height);
-            //}
 
-            byte[] gray = processor.addContrast(pixelData, 3);
+
+            byte[] gray = processor.addContrast(pixelData, 4);
             gray = processor.Grayscale(gray);
-            //byte[] edge = processor.Edge(gray, Mask.Robinson3x3Horizontal, Mask.Robinson3x3Vertical);
-            //List<double[,]> mask = selectMask();
-            byte[] edgeGen, edgeLoc;
-            //if (mask.Count == 1)
-            //    edge = processor.Edge(gray, mask[0], factorSlider.Value, Convert.ToInt32(biasSlider.Value));
-            //else
-            //    edge = processor.Edge(gray, mask[0], mask[1]);
+            byte[] edgeGen;
 
             edgeGen = processor.Edge(gray, Mask.Gaussian3x3, 0.2, 0);
-            edgeLoc = processor.Edge(gray, Mask.Gaussian5x5Type2, 0.2, 0);
 
             edgeGen = processor.invert(edgeGen);
-            edgeLoc = processor.invert(edgeLoc);
 
             int threshold = processor.getOtsuThreshold(gray) - 45;
-            //byte[] binary = processor.Binary(gray, 35, threshold);
             Windows.Foundation.Point seed = new Windows.Foundation.Point((int)width / 2, (int)height / 2);
-            //byte[] binaryGen = processor.Binary(edgeGen, 255, true);
-            //byte[] binaryLoc = processor.Binary(edgeLoc, 255, true);
 
             await writeBitmap(EdgeGen, edgeGen);
-            //await writeBitmap(BinaryGen, binaryGen);
-            await writeBitmap(EdgeLoc, edgeLoc);
-            //await writeBitmap(BinaryLoc, binaryLoc);
-            await writeBitmap(Grayscale, gray);
+            //await writeBitmap(EdgeLoc, edgeLoc);
+            //await writeBitmap(Grayscale, gray);
 
             Bitmap segmentImage = (Bitmap)EdgeGen;
-            //Bitmap segmentImage2;/* = (Bitmap)EdgeLoc;*/
             BlobCounter blobCounter = new BlobCounter();
             blobCounter.FilterBlobs = true;
-            blobCounter.MinWidth = 70;
-            blobCounter.MinHeight = 70;
+            blobCounter.MinWidth = 40;
+            blobCounter.MinHeight = 40;
             blobCounter.MaxHeight = (int)height - 10;
             blobCounter.MaxWidth = (int)width - 10;
-            //blobCounter.BackgroundThreshold = System.Drawing.Color.FromArgb(255,threshold,threshold,threshold);
+            blobCounter.ObjectsOrder = ObjectsOrder.Size;
             blobCounter.ProcessImage(segmentImage);
 
-            processor.analyzeBlobs(pixelData, edgeGen, seed, (int)width, (int)height);
 
-            await writeBitmap(bitmap, pixelData);
+
 
             int index = 0;
 
             if (blobCounter.ObjectsCount != 0)
             {
-                aimedRectangle = getMaxRectangle(blobCounter.GetObjectsRectangles(), index, (int)width - 1, (int)height - 1);
-
-                List<IntPoint> points = blobCounter.GetBlobsEdgePoints(blobCounter.GetObjectsInformation()[index]);
-
                 Blob nev = blobCounter.GetObjectsInformation()[index];
-                //Bitmap segmentImage2 = (Bitmap)(new WriteableBitmap(nev.Image.Width, nev.Image.Height));
-                //blobCounter.ExtractBlobsImage(segmentImage2, nev, true);
-                Accord.Point center = nev.CenterOfGravity;
+                if (nev.Rectangle.Contains((int)(width / 2), (int)(height / 2)) && new IntPoint((int)(width / 2), (int)(height / 2)).DistanceTo(new Accord.IntPoint(nev.Rectangle.Center().X, nev.Rectangle.Center().Y)) < 50)
+                {
+                    aimedRectangle = nev.Rectangle;
+                }
+                else
+                {
+                    index = getMaxRectangle(blobCounter.GetObjectsRectangles(), (int)width - 1, (int)height - 1);
+                    nev = blobCounter.GetObjectsInformation()[index];
+                    aimedRectangle = nev.Rectangle;
+                }
+                List<IntPoint> points = blobCounter.GetBlobsEdgePoints(blobCounter.GetObjectsInformation()[index]);
+                List<IntPoint> pointsL, pointsR, pointsU, pointsD;
+                pointsL = new List<IntPoint>();
+                pointsR = new List<IntPoint>();
+                pointsU = new List<IntPoint>();
+                pointsD = new List<IntPoint>();
+                blobCounter.GetBlobsLeftAndRightEdges(nev, out pointsL, out pointsR);
+                blobCounter.GetBlobsTopAndBottomEdges(nev, out pointsU, out pointsD);
+
+                pixelData = processor.analyzeBlob(pixelData, edgeGen, aimedRectangle, pointsL, pointsR, pointsU, pointsD/*, out nevus*/);
+                colorDeviation = processor.colorVariation;
                 area = nev.Area;
+                double blackness = processor.blackness;
+                double blueness = processor.blueness;
+                double redness = processor.redness;
+                await writeBitmap(bitmap, pixelData);
 
-                stDev = nev.ColorStdDev;
-                //colorDeviation = nev.Image.StandardDeviation(nev.Image.Mean());
+                Accord.Point center = nev.CenterOfGravity;
 
-                //nBlobs = microBlobCounter.ObjectsCount;
                 scaleFactor = CalculateScaleFactor(par.captureElementSize.Width, new Windows.Foundation.Size(originalWidth, originalHeigth), par.interLine);
 
                 bitmap.DrawRectangle(aimedRectangle.Left, aimedRectangle.Top, aimedRectangle.Right, aimedRectangle.Bottom, Windows.UI.Color.FromArgb(255, 255, 0, 100));
+
                 double scaledArea = (aimedRectangle.Width * scaleFactor) * (aimedRectangle.Height * scaleFactor);
+                double BorderEvenRate = getAsymmentryRate(center, blobCounter.GetBlobsEdgePoints(nev));
+                bool asymetric = false;
+                bool big = false;
+                asymetric = BorderEvenRate > 100 ? true : false;
+                big = scaledArea > 25 ? true : false;
+
                 ProgressRing.IsActive = false;
-                ////setBackImage(nev.Image.ToManagedImage());
-                //areaText.Text = string.Format("{0:0.##}", area);
-                //gravityCenterText.Text = "X:" + string.Format("{0:0.##}", center.X) + " Y:" + string.Format("{0:0.##}", center.Y);
-                MessageDialog dialog = new MessageDialog("Area = " + string.Format("{0:0.##}", scaledArea) + " mm.");
+                MessageDialog dialog = new MessageDialog("Area = " + string.Format("{0:0.##}", scaledArea) + " mm. " + "\nBorderVar = " + string.Format("{0:0.##}", BorderEvenRate) + "; \nColorDev = " + string.Format("{0:0.##}", colorDeviation) + "; \nDarkness = " + string.Format("{0:0.##}", blackness) + "; \nBlueness = " + string.Format("{0:0.##}", blueness) + "; \nRedness = " + string.Format("{0:0.##}", redness) + " \nAsymmetric = " + asymetric + " \nBigger than norm = " + big);
                 await dialog.ShowAsync();
-                
+
             }
             else
             {
                 MessageDialog dialog = new MessageDialog("No moles were found, please, try another photo.");
                 await dialog.ShowAsync();
             }
+            
+            return bitmap;
+        }
 
+        private double getAsymmentryRate(Accord.Point gravityCenter, List<IntPoint> blobContour)
+        {
+            List<double> dists = new List<double>();
+            foreach (IntPoint point in blobContour)
+            {
+                dists.Add(gravityCenter.DistanceTo(point));
+            }
+            double[] d = dists.ToArray<double>();
 
-
-            //colorDeviationText.Text = string.Format("{0:0.##}", colorDeviation);
-            //innerBlobsText.Text = string.Format("{0:0.##}", nBlobs);
-
-            //nev.Image.ToManagedImage().StandardDeviation(nev.Image.ToManagedImage().Mean());
-            setMainImage(bitmap);
-            //setBackImage1(BinaryGen);
-            //setBackImage2(BinaryLoc);
-            //setBackImage(Grayscale);
-
-
-            //await saveImage(Edge, "Edge");
-            //await saveImage(Binary, "Bin");
-            //await saveImage(Grayscale, "Gray");
-
-            //Contrast = new WriteableBitmap((int)width, (int)height);
-            //Binary = new WriteableBitmap((int)width, (int)height);
-            //Edge = new WriteableBitmap((int)width, (int)height);
-            //Grayscale = new WriteableBitmap((int)width, (int)height);
-
-            //contrast = new byte[(int)width * (int)height];
-            //grayscale = new byte[(int)width * (int)height];
-            //edge = new byte[(int)width * (int)height];
-            //binary = new byte[(int)width * (int)height];
-            //processor.Edge(pixelData, Mask.Kirsch3x3Horizontal, Mask.Kirsch3x3Vertical);// = processor.Grayscale(pixelData);
-
-            //grayscale = processor.Binary(grayscale, 180);
-
-            //StorageFile file;
-            //file = await saveImage(bitmap);
-            return EdgeGen;
+            return Accord.Statistics.Measures.Variance(d);
         }
 
         private async Task writeBitmap(WriteableBitmap bitmap, byte[] pixelData)
@@ -667,47 +619,7 @@ namespace MySkin_Alpha
                 await stream.WriteAsync(pixelData, 0, pixelData.Length);
             }
         }
-
-        //private List<double[,]> selectMask()
-        //{
-        //    List<double[,]> masks = new List<double[,]>();
-        //    if (comboBox != null)
-        //    {
-        //        ComboBoxItem selectedItem = (ComboBoxItem)comboBox.SelectedItem;
-        //        switch (selectedItem.Tag.ToString())
-        //        {
-        //            case "SO3":
-        //                masks.Add(Mask.Sobel3x3Horizontal);
-        //                masks.Add(Mask.Sobel3x3Vertical);
-        //                break;
-        //            case "KI3":
-        //                masks.Add(Mask.Kirsch3x3Horizontal);
-        //                masks.Add(Mask.Kirsch3x3Vertical);
-        //                break;
-        //            case "RO3":
-        //                masks.Add(Mask.Robinson3x3Horizontal);
-        //                masks.Add(Mask.Robinson3x3Vertical);
-        //                break;
-        //            case "LA5":
-        //                masks.Add(Mask.Laplacian5x5);
-        //                break;
-        //            case "LOG5":
-        //                masks.Add(Mask.LaplacianOfGaussian);
-        //                break;
-        //            case "GA3":
-        //                masks.Add(Mask.Gaussian3x3);
-        //                break;
-        //            case "GA5_1":
-        //                masks.Add(Mask.Gaussian5x5Type1);
-        //                break;
-        //            case "GA5_2":
-        //                masks.Add(Mask.Gaussian5x5Type2);
-        //                break;
-        //        }
-        //    }
-        //    return masks;
-        //}
-
+        
 
         #endregion
 
@@ -715,13 +627,8 @@ namespace MySkin_Alpha
         {
             if (pixelData != null)
             {
-                //mainImage.Source = null;
-                WriteableBitmap gray = await process(pixelData);
-                //Bitmap test = await WritableBitmapToBitmap(gray);
-                //Bitmap test1 = analyzeBlobs(Bimage);
-                //setBackImage(test1);
-                //setMainImage(gray);
-                //setBackImage(gray);
+                WriteableBitmap rez = await process(pixelData);
+                setMainImage(rez);
             }
         }
     }

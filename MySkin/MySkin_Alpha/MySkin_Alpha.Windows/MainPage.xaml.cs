@@ -78,6 +78,18 @@ namespace MySkin_Alpha
             // If you are using the NavigationHelper provided by some templates,
             // this event is handled for you.
         }
+
+        protected override async void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            //await StopPreviewAsync();
+            await MyMediaCapture.StopPreviewAsync();
+
+        }
+
+
+
+
         private readonly DisplayRequest displayRequest = new DisplayRequest();
 
         private async void InitCamera()
