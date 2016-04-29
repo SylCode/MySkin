@@ -156,10 +156,10 @@ namespace MySkin_Alpha
             imageData.Seek(0);
             await image.SetSourceAsync(imageData);
             int xL, yL, w, h;
-            xL = ((int)width - 640) / 2;
-            yL = ((int)height - 640) / 2;
-            w = 640;
-            h = 640;
+            xL = ((int)width - 840) / 2;
+            yL = ((int)height - 840) / 2;
+            w = 840;
+            h = 840;
 
 
             //image.DrawRectangle(xL, yL, w, h, Colors.Red);
@@ -180,8 +180,8 @@ namespace MySkin_Alpha
 
         private double CalculateScaleFactor(double capWidth, Windows.Foundation.Size imageSize, double interLine)
         {
-            double rel = 10.0/interLine;
-            return (rel/((double)imageSize.Width/ capWidth)/* * (double)interLine*/);
+            double rel = 10.0 / interLine;
+            return (rel / ((double)imageSize.Width / capWidth)/* * (double)interLine*/);
         }
 
         private byte[] getPixelData(WriteableBitmap image)
@@ -321,7 +321,7 @@ namespace MySkin_Alpha
 
             List<IntPoint> points = blobCounter.GetBlobsEdgePoints(blobCounter.GetObjectsInformation()[index]);
 
-            
+
             blobCounter.ExtractBlobsImage(tBimage, nev, true);
             Accord.Point center = nev.CenterOfGravity;
             area = nev.Area;
@@ -374,10 +374,10 @@ namespace MySkin_Alpha
             int ct = 0, index = 0;
             float min = imageWidth * imageHeight;
             IntPoint p1 = new IntPoint(imageWidth / 2, imageHeight / 2);
-            
+
             foreach (Rectangle rect in rects)
             {
-                if (p1.DistanceTo(new IntPoint(rect.Center().X,rect.Center().Y)) < min)
+                if (p1.DistanceTo(new IntPoint(rect.Center().X, rect.Center().Y)) < min)
                 {
                     min = p1.DistanceTo(new IntPoint(rect.Center().X, rect.Center().Y));
                     index = ct;
@@ -482,14 +482,16 @@ namespace MySkin_Alpha
             StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(Package.Current.InstalledLocation.Path);
             try
             {
-                file = await folder.GetFileAsync("Data.txt");
+                file = await folder.GetFileAsync("Data.csv");
             }
             catch (FileNotFoundException)
             {
-                file = await folder.CreateFileAsync("Data.txt");
+                file = await folder.CreateFileAsync("Data.csv");
+                await FileIO.AppendTextAsync(file, "Area,BorderVar,ColorDev,Darkness,Blueness,Redness" + "\n");
+
             }
 
-            await FileIO.AppendTextAsync(file, text + "\n\n");
+            await FileIO.AppendTextAsync(file, text + "\n");
         }
 
         #endregion
@@ -580,14 +582,16 @@ namespace MySkin_Alpha
                 bitmap.DrawRectangle(aimedRectangle.Left, aimedRectangle.Top, aimedRectangle.Right, aimedRectangle.Bottom, Windows.UI.Color.FromArgb(255, 255, 0, 100));
 
                 double scaledArea = (aimedRectangle.Width * scaleFactor) * (aimedRectangle.Height * scaleFactor);
-                double BorderEvenRate = getAsymmentryRate(center, blobCounter.GetBlobsEdgePoints(nev));
+                double borderEvenRate = getAsymmentryRate(center, blobCounter.GetBlobsEdgePoints(nev));
                 bool asymetric = false;
                 bool big = false;
-                asymetric = BorderEvenRate > 100 ? true : false;
+                asymetric = borderEvenRate > 100 ? true : false;
                 big = scaledArea > 25 ? true : false;
 
                 ProgressRing.IsActive = false;
-                MessageDialog dialog = new MessageDialog("Area = " + string.Format("{0:0.##}", scaledArea) + " mm. " + "\nBorderVar = " + string.Format("{0:0.##}", BorderEvenRate) + "; \nColorDev = " + string.Format("{0:0.##}", colorDeviation) + "; \nDarkness = " + string.Format("{0:0.##}", blackness) + "; \nBlueness = " + string.Format("{0:0.##}", blueness) + "; \nRedness = " + string.Format("{0:0.##}", redness) + " \nAsymmetric = " + asymetric + " \nBigger than norm = " + big);
+                //Accord.IO.CsvWriter csvWriter = new Accord.IO.CsvWriter()
+                writeInfo(string.Format("{0:0.####}", scaledArea) + "," + string.Format("{0:0.####}", borderEvenRate) + "," + string.Format("{0:0.####}", colorDeviation) + "," + string.Format("{0:0.####}", blackness) + "," + string.Format("{0:0.####}", blueness) + "," + string.Format("{0:0.####}", redness) + ",");
+                MessageDialog dialog = new MessageDialog("Area = " + string.Format("{0:0.##}", scaledArea) + " mm. " + "\nBorderVar = " + string.Format("{0:0.##}", borderEvenRate) + "; \nColorDev = " + string.Format("{0:0.##}", colorDeviation) + "; \nDarkness = " + string.Format("{0:0.##}", blackness) + "; \nBlueness = " + string.Format("{0:0.##}", blueness) + "; \nRedness = " + string.Format("{0:0.##}", redness) + " \nAsymmetric = " + asymetric + " \nBigger than norm = " + big);
                 await dialog.ShowAsync();
 
             }
@@ -596,7 +600,7 @@ namespace MySkin_Alpha
                 MessageDialog dialog = new MessageDialog("No moles were found, please, try another photo.");
                 await dialog.ShowAsync();
             }
-            
+
             return bitmap;
         }
 
@@ -619,7 +623,7 @@ namespace MySkin_Alpha
                 await stream.WriteAsync(pixelData, 0, pixelData.Length);
             }
         }
-        
+
 
         #endregion
 

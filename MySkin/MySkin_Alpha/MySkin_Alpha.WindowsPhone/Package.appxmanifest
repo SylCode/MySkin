@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="174b36d0-6ebb-41d6-a023-acc61582bb49" Publisher="CN=Никита" Version="1.0.0.0" />
-  <mp:PhoneIdentity PhoneProductId="174b36d0-6ebb-41d6-a023-acc61582bb49" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="307eef60-a490-4221-a093-85ca2b080f0f" Publisher="CN=Никита" Version="1.0.0.0" />
+  <mp:PhoneIdentity PhoneProductId="307eef60-a490-4221-a093-85ca2b080f0f" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>MySkin_Alpha.WindowsPhone</DisplayName>
     <PublisherDisplayName>Никита</PublisherDisplayName>

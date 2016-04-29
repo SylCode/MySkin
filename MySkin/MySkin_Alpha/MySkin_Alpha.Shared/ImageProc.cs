@@ -633,16 +633,16 @@ namespace MySkin_Alpha
                         {
                             blueness++;
                             final[imageOffset] = 220;
-                            final[imageOffset + 1] = /*163*/0;
-                            final[imageOffset + 2] = /*73*/0;
+                            final[imageOffset + 1] = 163;
+                            final[imageOffset + 2] = 73;
                             final[imageOffset + 3] = 255;
                         }
                         if (gray[imageOffset + 2] <= gray[imageOffset] || Math.Abs(gray[imageOffset] - gray[imageOffset + 2]) <= 10)
                         {
                             blueness++;
-                            final[imageOffset] = 220;
-                            final[imageOffset + 1] = 163;
-                            final[imageOffset + 2] = 73;
+                            final[imageOffset] = 255;
+                            final[imageOffset + 1] = 0;
+                            final[imageOffset + 2] = 0;
                             final[imageOffset + 3] = 255;
                         }
                         if (gray[imageOffset] <= 40 && gray[imageOffset + 1] <= 40 && Math.Abs(gray[imageOffset] - gray[imageOffset + 1]) <= 10 && Math.Abs((Math.Max(gray[imageOffset], gray[imageOffset + 1]) + 1) / (gray[imageOffset + 2] + 1)) <= 0.3)

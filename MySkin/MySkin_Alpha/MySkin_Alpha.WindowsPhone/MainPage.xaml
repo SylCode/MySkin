@@ -34,11 +34,13 @@
         </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
-            <RowDefinition/>
+            <RowDefinition Height="55*"/>
+            <RowDefinition Height="74*"/>
+            <RowDefinition Height="79*"/>
         </Grid.RowDefinitions>
 
         <!-- Back button and page title -->
-        <Grid Grid.ColumnSpan="4">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="*"/>
@@ -47,49 +49,73 @@
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" />
         </Grid>
 
-        <Frame x:Name="ScenarioFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Grid.Row="1"/>
-        <CaptureElement Name="myCaptureElement" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"/>
-        <Grid Grid.Row="1" Name="Second" Grid.ColumnSpan="4" Grid.RowSpan="3">
-            <Canvas VerticalAlignment="Center" Height="80" Width="80">
-                <Line X1="80" Y1="0" X2="0" Y2="80" Stroke="Red" StrokeThickness="2"></Line>
-                <Line X1="0" Y1="0" X2="80" Y2="80" Stroke="Red" StrokeThickness="2"></Line>
+        <!--<Frame x:Name="ScenarioFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Grid.Row="1"/>-->
+        <CaptureElement Name="myCaptureElement" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Margin="0,0,0,-0.111" Grid.RowSpan="3" Tapped="myCaptureElement_Tapped"/>
+        <Grid Grid.Row="1" Name="Second" Grid.RowSpan="3" Margin="0,0,0,-0.111">
+            <Canvas Name="Cross" VerticalAlignment="Center" Height="80" Width="80">
+                <Line X1="60" Y1="20" X2="20" Y2="60" Stroke="Red" StrokeThickness="1"></Line>
+                <Line X1="20" Y1="20" X2="60" Y2="60" Stroke="Red" StrokeThickness="1"></Line>
                 <!--<Line X1="0" Y1="0" X2="80" Y2="0" Stroke="Red" StrokeThickness="2"></Line>-->
                 <!--<Line X1="0" Y1="0" X2="0" Y2="80" Stroke="Red" StrokeThickness="2"></Line>-->
                 <!--<Line X1="80" Y1="80" X2="0" Y2="80" Stroke="Red" StrokeThickness="2"></Line>-->
                 <!--<Line X1="80" Y1="80" X2="80" Y2="0" Stroke="Red" StrokeThickness="2"></Line>-->
             </Canvas>
         </Grid>
-        <Grid Grid.Row="1" Name="Meter">
-            
-            <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid Grid.Row="2" Name="Meter">
+
+            <Canvas Name="Lines" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                 <!--<Line X1="60" Y1="65" X2="100" Y2="65" Stroke="Red" StrokeThickness="2"></Line>
                 <Line X1="80" Y1="95" X2="100" Y2="95" Stroke="Red" StrokeThickness="2"></Line>
                 <Line X1="60" Y1="125" X2="100" Y2="125" Stroke="Red" StrokeThickness="2"></Line>
                 <Line X1="80" Y1="155" X2="100" Y2="155" Stroke="Red" StrokeThickness="2"></Line>-->
-                <Line Name="refLine1" X1="60" Y1="185" X2="100" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
-                <Line X1="80" Y1="215" X2="100" Y2="215" Stroke="Red" StrokeThickness="2"></Line>
-                <Line Name="refLine2" X1="60" Y1="245" X2="100" Y2="245" Stroke="Red" StrokeThickness="2"></Line>
-                <Line X1="80" Y1="275" X2="100" Y2="275" Stroke="Red" StrokeThickness="2"></Line>
-                <Line X1="60" Y1="305" X2="100" Y2="305" Stroke="Red" StrokeThickness="2"></Line>
-                <Line X1="80" Y1="335" X2="100" Y2="335" Stroke="Red" StrokeThickness="2"></Line>
-                <Line X1="60" Y1="365" X2="100" Y2="365" Stroke="Red" StrokeThickness="2"></Line>
+                <Line Name="refLine1" X1="60" Y1="40" X2="100" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="80" Y1="70" X2="100" Y2="70" Stroke="Red" StrokeThickness="2"></Line>
+                <Line Name="refLine2" X1="60" Y1="100" X2="100" Y2="100" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="80" Y1="130" X2="100" Y2="130" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="60" Y1="160" X2="100" Y2="160" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="80" Y1="190" X2="100" Y2="190" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="60" Y1="220" X2="100" Y2="220" Stroke="Red" StrokeThickness="2"></Line>
                 <!--<Line X1="80" Y1="395" X2="100" Y2="395" Stroke="Red" StrokeThickness="2"></Line>
                 <Line X1="60" Y1="425" X2="100" Y2="425" Stroke="Red" StrokeThickness="2"></Line>-->
-                <Line X1="100" Y1="145" X2="100" Y2="365" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="100" Y1="0" X2="100" Y2="220" Stroke="Red" StrokeThickness="2"></Line>
 
 
 
-                <Line X1="100" Y1="185" X2="281" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
-                <Line X1="160" Y1="145" X2="160" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
-                <Line X1="130" Y1="165" X2="130" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
-                <Line X1="220" Y1="145" X2="220" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
-                <Line X1="190" Y1="165" X2="190" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
-                <Line X1="280" Y1="145" X2="280" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
-                <Line X1="250" Y1="165" X2="250" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="100" Y1="40" X2="281" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="160" Y1="0" X2="160" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="130" Y1="20" X2="130" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="220" Y1="0" X2="220" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="190" Y1="20" X2="190" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="280" Y1="0" X2="280" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="250" Y1="20" X2="250" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
 
             </Canvas>
         </Grid>
-        <Button x:Name="captureButton" Content="Capture" HorizontalAlignment="Center" Grid.Row="1" Click="captureButton_Click" Margin="10,522,281,1"/>
-        <Button x:Name="openButton" Content="Open" HorizontalAlignment="Center" Height="58" VerticalAlignment="Center" Width="109" Click="openButton_Click" Margin="281,522,10,0" RenderTransformOrigin="0.5,0.5" Grid.Row="1"/>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="PhotoButton" HorizontalAlignment="Right"   VerticalAlignment="Center" Tapped="PhotoButton_Tapped" IsEnabled="True" Margin="0,0,20,0">
+                <Viewbox MaxHeight="40" MaxWidth="40">
+                    <SymbolIcon Symbol="Camera"/>
+                </Viewbox>
+            </Button>
+            <Button Grid.Column="1" Name="dataBaseButton" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0" Tapped="dataBaseButton_Tapped">
+                <Viewbox MaxHeight="40" MaxWidth="40">
+                    <SymbolIcon Symbol="Folder"/>
+                </Viewbox>
+            </Button>
+        </Grid>
+        <TextBlock 
+                x:Name="focusBrackets"
+            Grid.Row="2"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+                Text="[   ]" 
+                FontSize="60"
+            Visibility="Collapsed" Margin="157,111,157,39.222"/>
+        <!--<Button x:Name="openButton" Content="Open" HorizontalAlignment="Center" Height="58" VerticalAlignment="Center" Width="109" Click="openButton_Click" Margin="281,522,10,0" RenderTransformOrigin="0.5,0.5" Grid.Row="1"/>-->
     </Grid>
 </Page>

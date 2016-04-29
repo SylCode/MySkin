@@ -2,7 +2,7 @@
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
   <Identity Name="cf8250f9-0a88-4446-9bd9-cf4551bd3bfe" Publisher="CN=Никита" Version="1.0.0.0" />
   <Properties>
-    <DisplayName>MySkin_Alpha.Windows</DisplayName>
+    <DisplayName>MySkin_Beta.Windows</DisplayName>
     <PublisherDisplayName>Никита</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -14,8 +14,8 @@
     <Resource Language="x-generate" />
   </Resources>
   <Applications>
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="MySkin_Alpha.Windows.App">
-      <m2:VisualElements DisplayName="MySkin_Alpha.Windows" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="MySkin_Alpha.Windows" ForegroundText="light" BackgroundColor="#464646">
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="MySkin_Beta.Windows.App">
+      <m2:VisualElements DisplayName="MySkin_Beta.Windows" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="MySkin_Beta.Windows" ForegroundText="light" BackgroundColor="#464646">
         <m2:SplashScreen Image="Assets\SplashScreen.png" />
       </m2:VisualElements>
     </Application>

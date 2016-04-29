@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.Devices.Sensors;
@@ -48,14 +41,17 @@ namespace MySkin_Alpha
     {
         public static MainPage Current;
         public List<double> captureElementSize;
+        List<Nevus> nevData;
         public MediaCapture MyMediaCapture { get; private set; }
         private readonly DisplayInformation displayInformation = DisplayInformation.GetForCurrentView();
         private DisplayOrientations displayOrientation = DisplayOrientations.Portrait;
         private readonly SimpleOrientationSensor orientationSensor = SimpleOrientationSensor.GetDefault();
         private SimpleOrientation deviceOrientation = SimpleOrientation.NotRotated;
         private static readonly Guid RotationKey = new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1");
+        private readonly DisplayRequest displayRequest = new DisplayRequest();
         private bool externalCamera;
         private bool mirroringPreview;
+        private bool focused = false;
         BitmapImage bit = new BitmapImage();
         string filename = "Mole_";
         bool isPreviewing = false;
@@ -104,7 +100,7 @@ namespace MySkin_Alpha
             // this event is handled for you.
         }
 
-        protected override async void OnNavigatedFrom(NavigationEventArgs e)
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
             //await StopPreviewAsync();
@@ -113,7 +109,6 @@ namespace MySkin_Alpha
         }
 
 
-        private readonly DisplayRequest displayRequest = new DisplayRequest();
 
         #endregion
 
@@ -125,6 +120,8 @@ namespace MySkin_Alpha
             displayRequest.RequestActive();
             MyMediaCapture = new MediaCapture();
             await MyMediaCapture.InitializeAsync();
+
+            //MyMediaCapture.PhotoConfirmationCaptured += MyMediaCapture_PhotoConfirmationCaptured;
             MyMediaCapture.SetPreviewRotation(ConvertSimpleOrientationToVideoRotation(deviceOrientation));
 
             await MyMediaCapture.VideoDeviceController.SceneModeControl.SetValueAsync(CaptureSceneMode.Auto);
@@ -143,8 +140,8 @@ namespace MySkin_Alpha
 
             if (MyMediaCapture.VideoDeviceController.FlashControl.Supported)
             {
-                //MyMediaCapture.VideoDeviceController.FlashControl.Auto = true;
-                //MyMediaCapture.VideoDeviceController.FlashControl.Enabled = true;
+                MyMediaCapture.VideoDeviceController.FlashControl.Auto = true;
+                MyMediaCapture.VideoDeviceController.FlashControl.Enabled = true;
             }
 
             if (MyMediaCapture.VideoDeviceController.FocusControl.Supported)
@@ -164,8 +161,10 @@ namespace MySkin_Alpha
             //    AudioDeviceId = string.Empty,
 
             //});
-            SetResolution();
-
+            //SetResolution(MediaStreamType.VideoPreview);
+            IReadOnlyList<IMediaEncodingProperties> resolutions = MyMediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(MediaStreamType.Photo);
+            // set used resolution
+            await MyMediaCapture.VideoDeviceController.SetMediaStreamPropertiesAsync(MediaStreamType.Photo, resolutions[0]);
 
 
             // Assign to Xaml CaptureElement.Source and start preview
@@ -184,8 +183,10 @@ namespace MySkin_Alpha
                 MessageDialog dialog = new MessageDialog("Camera could'n be initialised. Error: " + ex.Message + "  " + ex.InnerException);
                 await dialog.ShowAsync();
             }
+            await SetPreviewRotationAsync();
 
         }
+
 
         private async Task SetPreviewRotationAsync()
         {
@@ -208,10 +209,10 @@ namespace MySkin_Alpha
 
         }
 
-        public async void SetResolution()
+        public async void SetResolution(MediaStreamType mediaStreamType)
         {
-            System.Collections.Generic.IReadOnlyList<IMediaEncodingProperties> res;
-            res = MyMediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(MediaStreamType.VideoPreview);
+            IReadOnlyList<IMediaEncodingProperties> res;
+            res = MyMediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(mediaStreamType);
             uint maxResolution = 0;
             int indexMaxResolution = 0;
 
@@ -248,7 +249,7 @@ namespace MySkin_Alpha
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 myCaptureElement.Source = null;
-                
+
                 displayRequest.RequestRelease();
             });
         }
@@ -275,10 +276,6 @@ namespace MySkin_Alpha
             }
         }
 
-        private async void MediaCapture_Failed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
-        {
-            await CleanupCameraAsync();
-        }
 
         #endregion
 
@@ -316,6 +313,29 @@ namespace MySkin_Alpha
                 await SetPreviewRotationAsync();
             }
 
+        }
+
+        private async void PhotoButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await TakePhotoAsync();
+        }
+
+        private async void myCaptureElement_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            //await MyMediaCapture.VideoDeviceController.RegionsOfInterestControl.ClearRegionsAsync();
+            //// focus in the center of the screen
+            //await MyMediaCapture.VideoDeviceController.RegionsOfInterestControl.SetRegionsAsync(new[]{new RegionOfInterest() {Bounds = new Rect(0.49,0.49,0.02,0.02) }});
+            if (MyMediaCapture.VideoDeviceController.FocusControl.Supported)
+            {
+                MyMediaCapture.VideoDeviceController.FocusControl.Configure(new FocusSettings { Mode = FocusMode.Auto });
+                await MyMediaCapture.VideoDeviceController.FocusControl.FocusAsync();
+                focused = true;
+            }
+        }
+
+        private async void MediaCapture_Failed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
+        {
+            await CleanupCameraAsync();
         }
 
         #endregion
@@ -398,8 +418,9 @@ namespace MySkin_Alpha
                 case SimpleOrientation.Rotated270DegreesCounterclockwise:
                     return PhotoOrientation.Rotate270;
                 case SimpleOrientation.NotRotated:
+                    return PhotoOrientation.Rotate270;
                 default:
-                    return PhotoOrientation.Normal;
+                    return PhotoOrientation.Rotate270;
             }
         }
 
@@ -428,21 +449,25 @@ namespace MySkin_Alpha
                 nevParams.file = file;
                 nevParams.captureElementSize = myCaptureElement.RenderSize;
                 nevParams.interLine = refLine2.Y1 - refLine1.Y1;
-                Frame.Navigate(typeof(ImagePage), nevParams);
+                Frame.Navigate(typeof(CheckPage), nevParams);
             }
         }
 
         private async Task TakePhotoAsync()
         {
             var stream = new InMemoryRandomAccessStream();
-            if (MyMediaCapture.VideoDeviceController.FocusControl.Supported)
-                await MyMediaCapture.VideoDeviceController.FocusControl.FocusAsync();
+            if (!focused)
+                if (MyMediaCapture.VideoDeviceController.FocusControl.Supported)
+                    await MyMediaCapture.VideoDeviceController.FocusControl.FocusAsync();
             try
             {
+
+                //SetResolution(MediaStreamType.Photo);
                 await MyMediaCapture.CapturePhotoToStreamAsync(ImageEncodingProperties.CreateJpeg(), stream);
 
-                var photoOrientation = ConvertOrientationToPhotoOrientation(GetCameraOrientation());
+                var photoOrientation = ConvertOrientationToPhotoOrientation(deviceOrientation);
                 await ReencodeAndSavePhotoAsync(stream, "photo.jpg", photoOrientation);
+                //SetResolution(MediaStreamType.VideoPreview);
             }
             catch (Exception ex)
             {
@@ -464,18 +489,17 @@ namespace MySkin_Alpha
         }
 
 
-        private async void captureButton_Click(object sender, RoutedEventArgs e)
-        {
-            await TakePhotoAsync();
-            //StorageFolder folder = KnownFolders.PicturesLibrary;
-            //StorageFolder appFolder = await folder.CreateFolderAsync("MySkin_Moles", CreationCollisionOption.OpenIfExists);
-            //StorageFile file = await appFolder.CreateFileAsync(filename + Convert.ToString(DateTime.Now.Ticks), CreationCollisionOption.GenerateUniqueName);
-            //ImageEncodingProperties props = ImageEncodingProperties.CreateJpeg();
+        //private async void captureButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    //StorageFolder folder = KnownFolders.PicturesLibrary;
+        //    //StorageFolder appFolder = await folder.CreateFolderAsync("MySkin_Moles", CreationCollisionOption.OpenIfExists);
+        //    //StorageFile file = await appFolder.CreateFileAsync(filename + Convert.ToString(DateTime.Now.Ticks), CreationCollisionOption.GenerateUniqueName);
+        //    //ImageEncodingProperties props = ImageEncodingProperties.CreateJpeg();
 
-            //Stream stream = 
-            //await MyMediaCapture.CapturePhotoToStreamAsync(props, stream);
+        //    //Stream stream = 
+        //    //await MyMediaCapture.CapturePhotoToStreamAsync(props, stream);
 
-        }
+        //}
         private void openButton_Click(object sender, RoutedEventArgs e)
         {
             FileOpenPicker openPicker = new FileOpenPicker();
@@ -501,7 +525,7 @@ namespace MySkin_Alpha
                         nevParams.file = img;
                         nevParams.captureElementSize = myCaptureElement.RenderSize;
                         nevParams.interLine = refLine2.Y1 - refLine1.Y1;
-                        Frame.Navigate(typeof(ImagePage), nevParams);
+                        Frame.Navigate(typeof(CheckPage), nevParams);
                     }
                 }
                 finally
@@ -513,9 +537,13 @@ namespace MySkin_Alpha
             }
         }
 
+
         #endregion
 
-
+        private void dataBaseButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(DatabasePage));
+        }
     }
 }
 

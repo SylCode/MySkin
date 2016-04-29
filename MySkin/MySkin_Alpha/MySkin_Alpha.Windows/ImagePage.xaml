@@ -37,12 +37,12 @@
                 <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="backButton" Margin="39,59,39,0" Command="{Binding NavigationHelper.GoBackCommand, ElementName=pageRoot}"
+            <Button x:Name="backButton" Margin="39,59,39,0" 
                         Style="{StaticResource NavigationBackButtonNormalStyle}"
                         VerticalAlignment="Top"
                         AutomationProperties.Name="Back"
                         AutomationProperties.AutomationId="BackButton"
-                        AutomationProperties.ItemType="Navigation Button"/>
+                        AutomationProperties.ItemType="Navigation Button" Click="backButton_Click"/>
             <TextBlock x:Name="pageTitle" Text="{StaticResource AppName}" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
         </Grid>
@@ -61,7 +61,10 @@
                 <ColumnDefinition Width="6*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
+
+            <ProgressRing x:Name="progressRing" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="122" Margin="421,253" Width="122"/>
             <Grid Grid.Column="1">
+                
                 <Grid.RowDefinitions>
                     <RowDefinition Height="0.5*"></RowDefinition>
                     <RowDefinition Height="0.5*"></RowDefinition>
@@ -86,42 +89,19 @@
             <Image x:Name="mainImage" Grid.Column="1" Margin="10,10,0,10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <!--<Canvas x:Name="canvasLeft" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Column="0" VerticalAlignment="Center"/>-->
             <Canvas x:Name="infoCanvas" Grid.Column="1" Margin="10,10,0,10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <TextBlock x:Name="SuqareBlock" HorizontalAlignment="Left" Margin="18,18,0,0" TextWrapping="Wrap" Text="Area:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="areaText" HorizontalAlignment="Left" Margin="136,18,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy1" HorizontalAlignment="Left" Margin="18,42,0,0" TextWrapping="Wrap" Text="Gravity Center:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="gravityCenterText" HorizontalAlignment="Left" Margin="127,42,0,0" TextWrapping="Wrap" Text="X:0    Y:0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" Margin="18,123,0,0" TextWrapping="Wrap" Text="Color Deviation:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="colorDeviationText" HorizontalAlignment="Left" Margin="136,123,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy2" HorizontalAlignment="Left" Margin="18,147,0,0" TextWrapping="Wrap" Text="InnerBlobs:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="innerBlobsText" HorizontalAlignment="Left" Margin="136,147,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy3" HorizontalAlignment="Left" Margin="18,171,0,0" TextWrapping="Wrap" Text="Edges Count:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="edgesCountText" HorizontalAlignment="Left" Margin="136,171,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy4" HorizontalAlignment="Left" Margin="18,195,0,0" TextWrapping="Wrap" Text="Asymmetry:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="asymmetryText" HorizontalAlignment="Left" Margin="136,195,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy5" HorizontalAlignment="Left" Margin="18,219,0,0" TextWrapping="Wrap" Text="Border uneven:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="borderText" HorizontalAlignment="Left" Margin="136,219,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy6" HorizontalAlignment="Left" Margin="18,243,0,0" TextWrapping="Wrap" Text="Color uneven:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="unevenColorText" HorizontalAlignment="Left" Margin="136,243,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy7" HorizontalAlignment="Left" Margin="18,267,0,0" TextWrapping="Wrap" Text="Diameter:" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="bigDiameterText" HorizontalAlignment="Left" Margin="136,267,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="textBlock_Copy8" HorizontalAlignment="Left" Margin="18,95,0,0" TextWrapping="Wrap" Text="Diameter mm." VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock x:Name="diameterText" HorizontalAlignment="Left" Margin="136,95,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
-            <Button x:Name="processButton" Content="Process" HorizontalAlignment="Left" Margin="77,311,0,0" VerticalAlignment="Top" Click="processButton_Click"/>
-            <Image x:Name="hist" Grid.Column="0"  HorizontalAlignment="Left" Height="183" Margin="0,379,0,0" VerticalAlignment="Top" Width="241"/>
-            <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="18,379,0,0" VerticalAlignment="Top" Width="204">
-                <ComboBoxItem Tag="SO3">Sobel 3x3 VH</ComboBoxItem>
-                <ComboBoxItem Tag="KI3">Kirsch 3x3 VH</ComboBoxItem>
-                <ComboBoxItem Tag="RO3">Robinson 3x3 VH</ComboBoxItem>
-                <ComboBoxItem Tag="LA5">Laplassian 5x5</ComboBoxItem>
-                <ComboBoxItem Tag="LOG5">LaplacianOfGaussian 5x5</ComboBoxItem>
-                <ComboBoxItem Tag="GA3" IsSelected="True">Gaussian 3x3</ComboBoxItem>
-                <ComboBoxItem Tag="GA5_1">Gaussian 5x5 v1</ComboBoxItem>
-                <ComboBoxItem Tag="GA5_2">Gaussian 5x5 v2</ComboBoxItem>
-            </ComboBox>
-            <Slider x:Name="factorSlider" HorizontalAlignment="Left" Margin="18,432,0,0" VerticalAlignment="Top" Width="204" Height="46" Minimum="0.01" Maximum="1" StepFrequency="0.01" Value="0.2"/>
-            <Slider x:Name="biasSlider" HorizontalAlignment="Left" Margin="18,491,0,0" VerticalAlignment="Top" Width="204" Height="46" Minimum="0" Maximum="20"/>
-            <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="18,431,0,0" TextWrapping="Wrap" Text="Factor" VerticalAlignment="Top"/>
-            <TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="18,488,0,0" TextWrapping="Wrap" Text="Bias" VerticalAlignment="Top"/>
+            <TextBlock x:Name="SuqareBlock" HorizontalAlignment="Left" Margin="31,37,0,0" TextWrapping="Wrap" Text="Area (sq.mm):" VerticalAlignment="Top" FontSize="16"/>
+            <TextBlock x:Name="areaText" HorizontalAlignment="Left" Margin="149,37,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
+            <TextBlock x:Name="textBlock_Copy1" HorizontalAlignment="Left" Margin="31,61,0,0" TextWrapping="Wrap" Text="Border Irreg.:" VerticalAlignment="Top" FontSize="16"/>
+            <TextBlock x:Name="borderVariationText" HorizontalAlignment="Left" Margin="149,61,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16" RenderTransformOrigin="-0.778,0.491"/>
+            <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" Margin="31,85,0,0" TextWrapping="Wrap" Text="Color Deviation:" VerticalAlignment="Top" FontSize="16"/>
+            <TextBlock x:Name="colorDeviationText" HorizontalAlignment="Left" Margin="149,85,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
+            <TextBlock x:Name="textBlock_Copy2" HorizontalAlignment="Left" Margin="31,109,0,0" TextWrapping="Wrap" Text="Blackness:" VerticalAlignment="Top" FontSize="16"/>
+            <TextBlock x:Name="blacknessText" HorizontalAlignment="Left" Margin="149,109,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
+            <TextBlock x:Name="textBlock_Copy3" HorizontalAlignment="Left" Margin="31,133,0,0" TextWrapping="Wrap" Text="Blueness:" VerticalAlignment="Top" FontSize="16"/>
+            <TextBlock x:Name="bluenessText" HorizontalAlignment="Left" Margin="149,133,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
+            <TextBlock x:Name="textBlock_Copy4" HorizontalAlignment="Left" Margin="31,157,0,0" TextWrapping="Wrap" Text="Redness:" VerticalAlignment="Top" FontSize="16"/>
+            <TextBlock x:Name="rednessText" HorizontalAlignment="Left" Margin="149,157,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" FontSize="16"/>
+            <!--<Button x:Name="processButton" Content="Process" HorizontalAlignment="Left" Margin="77,207,0,0" VerticalAlignment="Top" Click="processButton_Click"/>-->
 
         </Grid>
     </Grid>

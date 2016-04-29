@@ -21,8 +21,8 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="188*"/>
-            <ColumnDefinition Width="63*"/>
+            <ColumnDefinition Width="163*"/>
+            <ColumnDefinition Width="88*"/>
             <ColumnDefinition Width="432*"/>
         </Grid.ColumnDefinitions>
         <Grid.ChildrenTransitions>
@@ -75,7 +75,7 @@
             </Canvas>
 
         </Grid>
-        <Grid Grid.Row="2" Grid.Column="1" Name="Meter" >
+        <!--<Grid Grid.Row="2" Grid.Column="1" Name="Meter" >
             <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Line X1="50" Y1="50" X2="100" Y2="50" Stroke="Red" StrokeThickness="2"></Line>
                 <Line X1="50" Y1="100" X2="100" Y2="100" Stroke="Red" StrokeThickness="2"></Line>
@@ -89,8 +89,38 @@
                 <Line X1="100" Y1="50" X2="100" Y2="450" Stroke="Red" StrokeThickness="2"></Line>
                 <Line X1="50" Y1="50" X2="50" Y2="450" Stroke="Red" StrokeThickness="2"></Line>
             </Canvas>
+        </Grid>-->
+        <Grid Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Name="Meter">
+
+            <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <!--<Line X1="60" Y1="65" X2="100" Y2="65" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="80" Y1="95" X2="100" Y2="95" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="60" Y1="125" X2="100" Y2="125" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="80" Y1="155" X2="100" Y2="155" Stroke="Red" StrokeThickness="2"></Line>-->
+                <Line Name="refLine1" X1="60" Y1="185" X2="100" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="80" Y1="215" X2="100" Y2="215" Stroke="Red" StrokeThickness="2"></Line>
+                <Line Name="refLine2" X1="60" Y1="245" X2="100" Y2="245" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="80" Y1="275" X2="100" Y2="275" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="60" Y1="305" X2="100" Y2="305" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="80" Y1="335" X2="100" Y2="335" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="60" Y1="365" X2="100" Y2="365" Stroke="Red" StrokeThickness="2"></Line>
+                <!--<Line X1="80" Y1="395" X2="100" Y2="395" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="60" Y1="425" X2="100" Y2="425" Stroke="Red" StrokeThickness="2"></Line>-->
+                <Line X1="100" Y1="145" X2="100" Y2="365" Stroke="Red" StrokeThickness="2"></Line>
+
+
+
+                <Line X1="100" Y1="185" X2="281" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="160" Y1="145" X2="160" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="130" Y1="165" X2="130" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="220" Y1="145" X2="220" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="190" Y1="165" X2="190" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="280" Y1="145" X2="280" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
+                <Line X1="250" Y1="165" X2="250" Y2="185" Stroke="Red" StrokeThickness="2"></Line>
+
+            </Canvas>
         </Grid>
 
-        <Button x:Name="captureButton" Content="Capture" HorizontalAlignment="Center" Grid.Row="4" Click="captureButton_Click" Grid.Column="2" Margin="138,6,639,6" Height="38" Width="87"/>
+        <Button x:Name="captureButton" Visibility="Visible" IsEnabled="True" Content="Capture" HorizontalAlignment="Center" Grid.Row="3" Click="captureButton_Click" Grid.Column="0" Grid.ColumnSpan="3" Height="38" Width="87" />
     </Grid>
 </Page>

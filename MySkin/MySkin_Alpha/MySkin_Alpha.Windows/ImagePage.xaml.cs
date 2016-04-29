@@ -118,6 +118,7 @@ namespace MySkin_Alpha
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            progressRing.IsActive = true;
             navigationHelper.OnNavigatedTo(e);
             par = (NevParams)e.Parameter;
             LoadImage(par.file);
@@ -126,7 +127,6 @@ namespace MySkin_Alpha
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             navigationHelper.OnNavigatedFrom(e);
-
         }
         private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
@@ -165,14 +165,12 @@ namespace MySkin_Alpha
             yL = ((int)height - 640) / 2;
             w = 640;
             h = 640;
-            
             image = image.Crop(xL, yL, w, h);
             width = (uint)image.PixelWidth;
             height = (uint)image.PixelHeight;
             pixelData = getPixelData(image);
             processor = new ImageProc(Convert.ToInt32(width), Convert.ToInt32(height));
-
-            setMainImage(image);
+            go();
         }
 
 
@@ -466,19 +464,21 @@ namespace MySkin_Alpha
             StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(Package.Current.InstalledLocation.Path);
             try
             {
-                file = await folder.GetFileAsync("Data.txt");
+                file = await folder.GetFileAsync("Data.csv");
             }
             catch (FileNotFoundException)
             {
-                file = await folder.CreateFileAsync("Data.txt");
+                file = await folder.CreateFileAsync("Data.csv");
+                await FileIO.AppendTextAsync(file, "Area,BorderVar,ColorDev,Darkness,Blueness,Redness" + "\n");
+
             }
 
-            await FileIO.AppendTextAsync(file, text + "\n\n");
+            await FileIO.AppendTextAsync(file, text + "\n");
         }
 
         #endregion
 
-        #region manual_proc
+        #region Accord_proc
         private async Task<WriteableBitmap> process(byte[] pixelData)
         {
             WriteableBitmap bitmap, Contrast, BinaryGen, BinaryLoc, EdgeGen, EdgeLoc, Grayscale;
@@ -564,15 +564,23 @@ namespace MySkin_Alpha
                 bitmap.DrawRectangle(aimedRectangle.Left, aimedRectangle.Top, aimedRectangle.Right, aimedRectangle.Bottom, Windows.UI.Color.FromArgb(255, 255, 0, 100));
 
                 double scaledArea = (aimedRectangle.Width * scaleFactor) * (aimedRectangle.Height * scaleFactor);
-                double BorderEvenRate = getAsymmentryRate(center, blobCounter.GetBlobsEdgePoints(nev));
+                double borderEvenRate = getAsymmentryRate(center, blobCounter.GetBlobsEdgePoints(nev));
                 bool asymetric = false;
                 bool big = false;
-                asymetric = BorderEvenRate > 100 ? true : false;
+                asymetric = borderEvenRate > 100 ? true : false;
                 big = scaledArea > 25 ? true : false;
 
                 //ProgressRing.IsActive = false;
-                MessageDialog dialog = new MessageDialog("Area = " + string.Format("{0:0.##}", scaledArea) + " mm. " + "\nBorderVar = " + string.Format("{0:0.##}", BorderEvenRate) + "; \nColorDev = " + string.Format("{0:0.##}", colorDeviation) + "; \nDarkness = " + string.Format("{0:0.##}", blackness) + "; \nBlueness = " + string.Format("{0:0.##}", blueness) + "; \nRedness = " + string.Format("{0:0.##}", redness) + " \nAsymmetric = " + asymetric + " \nBigger than norm = " + big);
-                await dialog.ShowAsync();
+                //Accord.IO.CsvWriter csvWriter = new Accord.IO.CsvWriter()
+                writeInfo(string.Format("{0:0.####}", scaledArea) + "," + string.Format("{0:0.####}", borderEvenRate) + "," + string.Format("{0:0.####}", colorDeviation) + "," + string.Format("{0:0.####}", blackness) + "," + string.Format("{0:0.####}", blueness) + "," + string.Format("{0:0.####}", redness) + ",");
+                areaText.Text = string.Format("{0:0.##}", scaledArea);
+                borderVariationText.Text = string.Format("{0:0.##}", borderEvenRate);
+                colorDeviationText.Text = string.Format("{0:0.##}", colorDeviation);
+                bluenessText.Text = string.Format("{0:0.##}", blackness);
+                bluenessText.Text = string.Format("{0:0.##}", blueness);
+                rednessText.Text = string.Format("{0:0.##}", redness);
+                //MessageDialog dialog = new MessageDialog("Area = " + string.Format("{0:0.##}", scaledArea) + " mm. " + "\nBorderVar = " + string.Format("{0:0.##}", BorderEvenRate) + "; \nColorDev = " + string.Format("{0:0.##}", colorDeviation) + "; \nDarkness = " + string.Format("{0:0.##}", blackness) + "; \nBlueness = " + string.Format("{0:0.##}", blueness) + "; \nRedness = " + string.Format("{0:0.##}", redness) + " \nAsymmetric = " + asymetric + " \nBigger than norm = " + big);
+                //await dialog.ShowAsync();
 
             }
             else
@@ -584,6 +592,10 @@ namespace MySkin_Alpha
             return bitmap;
         }
 
+        private void backButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MainPage));
+        }
 
         private double getAsymmentryRate(Accord.Point gravityCenter, List<IntPoint> blobContour)
         {
@@ -605,66 +617,15 @@ namespace MySkin_Alpha
                 await stream.WriteAsync(pixelData, 0, pixelData.Length);
             }
         }
-
-        private List<double[,]> selectMask()
-        {
-            List<double[,]> masks = new List<double[,]>();
-            if (comboBox != null)
-            {
-                ComboBoxItem selectedItem = (ComboBoxItem)comboBox.SelectedItem;
-                switch (selectedItem.Tag.ToString())
-                {
-                    case "SO3":
-                        masks.Add(Mask.Sobel3x3Horizontal);
-                        masks.Add(Mask.Sobel3x3Vertical);
-                        break;
-                    case "KI3":
-                        masks.Add(Mask.Kirsch3x3Horizontal);
-                        masks.Add(Mask.Kirsch3x3Vertical);
-                        break;
-                    case "RO3":
-                        masks.Add(Mask.Robinson3x3Horizontal);
-                        masks.Add(Mask.Robinson3x3Vertical);
-                        break;
-                    case "LA5":
-                        masks.Add(Mask.Laplacian5x5);
-                        break;
-                    case "LOG5":
-                        masks.Add(Mask.LaplacianOfGaussian);
-                        break;
-                    case "GA3":
-                        masks.Add(Mask.Gaussian3x3);
-                        break;
-                    case "GA5_1":
-                        masks.Add(Mask.Gaussian5x5Type1);
-                        break;
-                    case "GA5_2":
-                        masks.Add(Mask.Gaussian5x5Type2);
-                        break;
-                }
-            }
-            return masks;
-        }
-
-        //public double getNevusSize(Rectangle boundingRectangle)
-        //{
-        //    //double w = Window.Current.Bounds.Width;
-        //    //double h = Window.Current.Bounds.Height;
-        //    //DisplayInformation info = DisplayInformation.GetForCurrentView();
-        //    //double lDPI = info.LogicalDpi;
-        //    //double scaleFactor;
-        //    return (boundingRectangle.Width * boundingRectangle.Height) * scaleFactor;
-        //}
-
-
         #endregion
 
-        private async void processButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void go()
         {
             if (pixelData != null)
             {
                 mainImage.Source = null;
                 WriteableBitmap gray = await process(pixelData);
+                progressRing.IsActive = false;
                 //Bitmap test = await WritableBitmapToBitmap(gray);
                 //Bitmap test1 = analyzeBlobs(Bimage);
                 //setBackImage(test1);
