@@ -8,6 +8,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
+using Windows.UI.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -69,8 +70,8 @@ namespace MySkin_Alpha
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
-            var sampleDataGroups = await DataSource.GetGroupsAsync();
-            this.DefaultViewModel["Groups"] = sampleDataGroups;
+            var dataGroups = await DataSource.GetGroupsAsync();
+            this.DefaultViewModel["Groups"] = dataGroups;
         }
 
         /// <summary>
@@ -114,7 +115,30 @@ namespace MySkin_Alpha
 
         private void ItemView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            //FrameworkElement senderElement = sender as FrameworkElement;
+            //// If you need the clicked element:
+            //// Item whichOne = senderElement.DataContext as Item;
+            ////string heldItem = ((sender as ListView).Cl as DataItem).Name;
+            //FlyoutBase flyoutBase = FlyoutBase.GetAttachedFlyout(senderElement);
+            //flyoutBase.ShowAt(senderElement);
+            var itemId = ((DataItem)e.ClickedItem).Name;
+            Frame.Navigate(typeof(ImagePage), itemId);
+        }
 
+        private void ListView_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+                //FrameworkElement senderElement = sender as FrameworkElement;
+                //// If you need the clicked element:
+                //// Item whichOne = senderElement.DataContext as Item;
+                ////string heldItem = ((sender as ListView).Cl as DataItem).Name;
+                //FlyoutBase flyoutBase = FlyoutBase.GetAttachedFlyout(senderElement);
+                //flyoutBase.ShowAt(senderElement);
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            //string heldItem = ((sender as ListView).SelectedItem as DataItem).Name;
+            //DataSource.RemoveItem(heldItem);
         }
     }
 }

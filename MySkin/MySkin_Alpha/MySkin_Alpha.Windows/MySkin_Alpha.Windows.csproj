@@ -110,6 +110,10 @@
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="DatabasePage.xaml.cs">
+      <DependentUpon>DatabasePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataModel\DataSource.cs" />
     <Compile Include="ImagePage.xaml.cs">
       <DependentUpon>ImagePage.xaml</DependentUpon>
     </Compile>
@@ -128,12 +132,17 @@
   <ItemGroup>
     <Content Include="Assets\LightGray.png" />
     <Content Include="Assets\Logo.scale-100.png" />
+    <Content Include="Assets\Mole.jpg" />
     <Content Include="Assets\SmallLogo.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\StoreLogo.scale-100.png" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="CheckPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DatabasePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

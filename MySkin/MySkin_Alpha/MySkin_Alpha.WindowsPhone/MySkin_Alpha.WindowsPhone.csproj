@@ -95,6 +95,7 @@
     <Compile Include="ImagePage.xaml.cs">
       <DependentUpon>ImagePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ImageProcessor.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -108,6 +109,7 @@
   <ItemGroup>
     <Content Include="Assets\LightGray.png" />
     <Content Include="Assets\Logo.scale-240.png" />
+    <Content Include="Assets\Mole.jpg" />
     <Content Include="Assets\SmallLogo.scale-240.png" />
     <Content Include="Assets\SplashScreen.scale-240.png" />
     <Content Include="Assets\Square71x71Logo.scale-240.png" />
@@ -134,7 +136,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="DataModel\Data.json" />
+    <Content Include="DataModel\Data.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +174,10 @@
     </Reference>
     <Reference Include="Shim.Drawing, Version=3.0.0.0, Culture=neutral, PublicKeyToken=a7d03c0bc8d64dbc, processorArchitecture=MSIL">
       <HintPath>..\..\packages\shim.drawing.3.0.0\lib\portable-win81+wpa81\Shim.Drawing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WinRTXamlToolkit, Version=1.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WinRTXamlToolkit.WindowsPhone.1.8.1.0\lib\wpa\WinRTXamlToolkit.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WriteableBitmapEx.WinRT, Version=1.5.0.0, Culture=neutral, PublicKeyToken=50375ca6144f1c69, processorArchitecture=MSIL">

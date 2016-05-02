@@ -43,6 +43,7 @@ namespace MySkin_Alpha
     {
         public Size captureElementSize;
         public StorageFile file;
+        public string description;
         public double interLine;
     }
     public sealed partial class MainPage : Page
@@ -66,7 +67,6 @@ namespace MySkin_Alpha
         private MediaCapture _mediaCapture;
         private bool _isInitialized;
         private bool _isPreviewing;
-        private bool _isRecording;
 
         // Information about the camera device
         private bool _mirroringPreview;
@@ -708,8 +708,12 @@ namespace MySkin_Alpha
             // The RenderTransform is safe to use (i.e. it won't cause layout issues) in this case, because these buttons have a 1:1 aspect ratio
             //captureButton.RenderTransform = transform;
         }
+
         #endregion Rotation helpers
 
-
+        private void dataBaseButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(DatabasePage));
+        }
     }
 }

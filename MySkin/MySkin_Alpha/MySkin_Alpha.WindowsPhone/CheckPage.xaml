@@ -51,6 +51,7 @@
             <Canvas x:Name="infoCanvas" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.RowSpan="2" Margin="0,0,0,-0.222"/>
             <Button x:Name="processButton" Visibility="Collapsed" Content="Accept" Grid.Column="0" Grid.Row="1"   VerticalAlignment="Center" HorizontalAlignment="Right"  Height="58" Width="109" Margin="0,0,30,10" Click="processButton_Click"/>
             <Button x:Name="cancelButton" Content="Decline" Grid.Column="0" Grid.Row="1"   VerticalAlignment="Center" Height="58" Width="109" Margin="30,0,0,10" Click="cancelButton_Click"/>
+            <ProgressRing Name="progressRing" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         </Grid>
     </Grid>
 </Page>

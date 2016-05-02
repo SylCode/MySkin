@@ -30,6 +30,9 @@ using Windows.Devices.Enumeration;
 using Windows.UI.Xaml;
 using Windows.Graphics.Display;
 using System.Linq;
+using System.Runtime.Serialization.Json;
+using Windows.Data.Json;
+using MySkin_Alpha.Data;
 
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
@@ -57,11 +60,12 @@ namespace MySkin_Alpha
         private StorageFile file;
         private Nevus nevus;
         private byte[] pixelData;
-        private ImageProc processor;
+        private Methods processor;
         uint width, height;
         int originalWidth, originalHeigth;
         double scale = 0.25;
         double scaleFactor;
+        string path,name;
         /// <summary>
         /// This can be changed to a strongly typed view model.
         /// </summary>
@@ -150,6 +154,8 @@ namespace MySkin_Alpha
 
         private async void LoadImage(StorageFile file)
         {
+            path = file.Path;
+            name = file.Name;
             Bimage = await getBitmapFromFile(file);
             var imageData = await file.OpenReadAsync();
             var decoder = await BitmapDecoder.CreateAsync(imageData);
@@ -169,7 +175,7 @@ namespace MySkin_Alpha
             width = (uint)image.PixelWidth;
             height = (uint)image.PixelHeight;
             pixelData = getPixelData(image);
-            processor = new ImageProc(Convert.ToInt32(width), Convert.ToInt32(height));
+            processor = new Methods(Convert.ToInt32(width), Convert.ToInt32(height));
             go();
         }
 
@@ -458,22 +464,50 @@ namespace MySkin_Alpha
             dispImage3.UpdateLayout();
         }
 
-        private async void writeInfo(string text)
+        private async void writeInfo(Nevus nevus)
         {
-            StorageFile file;
-            StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(Package.Current.InstalledLocation.Path);
-            try
-            {
-                file = await folder.GetFileAsync("Data.csv");
-            }
-            catch (FileNotFoundException)
-            {
-                file = await folder.CreateFileAsync("Data.csv");
-                await FileIO.AppendTextAsync(file, "Area,BorderVar,ColorDev,Darkness,Blueness,Redness" + "\n");
+            await DataSource.AddNevusToDatabaseAsync(nevus);
+            //DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(List<Nevus>));
+            //try
+            //{
+            //    StorageFile f = await ApplicationData.Current.LocalFolder.GetFileAsync("Data.json");
+            //    //await FileIO.AppendTextAsync(file, ",");
+            //    string content = string.Empty;
+            //    List<Nevus> list = new List<Nevus>();
+            //    list.Add(nevus);
+            //    using (var stream = await ApplicationData.Current.LocalFolder.OpenStreamForWriteAsync("Data.json", CreationCollisionOption.OpenIfExists))
+            //    {
+            //        ser.WriteObject(stream, list);
+            //    }
+            //    //ser = new DataContractJsonSerializer(typeof(List<Nevus>));
+            //    var streamer = await ApplicationData.Current.LocalFolder.OpenStreamForReadAsync("Data.json");
+            //    list = (List<Nevus>)ser.ReadObject(streamer);
+            //    using (StreamReader reader = new StreamReader(streamer))
+            //    {
+            //        content = await reader.ReadToEndAsync();
 
-            }
+            //    }
 
-            await FileIO.AppendTextAsync(file, text + "\n");
+            //    JsonObject o = new JsonObject();
+            //    bool t = JsonObject.TryParse(content, out o);
+            //}
+            //catch (FileNotFoundException)
+            //{
+            //    using (var stream = await ApplicationData.Current.LocalFolder.OpenStreamForWriteAsync("Data.json", CreationCollisionOption.OpenIfExists))
+            //    {
+            //        List<Nevus> list = new List<Nevus>();
+            //        list.Add(nevus);
+            //        ser.WriteObject(stream, list);
+                    
+            //    }
+            //}
+            
+            
+            //foreach (Nevus ne in list)
+            //{
+            //    double area = ne.area;
+            //}
+            //await FileIO.AppendTextAsync(file, text + "\n");
         }
 
         #endregion
@@ -548,8 +582,8 @@ namespace MySkin_Alpha
                 pointsD = new List<IntPoint>();
                 blobCounter.GetBlobsLeftAndRightEdges(nev, out pointsL, out pointsR);
                 blobCounter.GetBlobsTopAndBottomEdges(nev, out pointsU, out pointsD);
-
-                pixelData = processor.analyzeBlob(pixelData, edgeGen, aimedRectangle, pointsL, pointsR, pointsU, pointsD/*, out nevus*/);
+                double assymmetryRate;
+                pixelData = processor.analyzeBlob(pixelData, edgeGen, aimedRectangle, pointsL, pointsR, pointsU, pointsD,out assymmetryRate/*, out nevus*/);
                 colorDeviation = processor.colorVariation;
                 area = nev.Area;
                 double blackness = processor.blackness;
@@ -570,9 +604,12 @@ namespace MySkin_Alpha
                 asymetric = borderEvenRate > 100 ? true : false;
                 big = scaledArea > 25 ? true : false;
 
+                await saveImage(bitmap, "sfs.jpg");
                 //ProgressRing.IsActive = false;
                 //Accord.IO.CsvWriter csvWriter = new Accord.IO.CsvWriter()
-                writeInfo(string.Format("{0:0.####}", scaledArea) + "," + string.Format("{0:0.####}", borderEvenRate) + "," + string.Format("{0:0.####}", colorDeviation) + "," + string.Format("{0:0.####}", blackness) + "," + string.Format("{0:0.####}", blueness) + "," + string.Format("{0:0.####}", redness) + ",");
+                //writeInfo(string.Format("{0:0.####}", scaledArea) + "," + string.Format("{0:0.####}", borderEvenRate) + "," + string.Format("{0:0.####}", colorDeviation) + "," + string.Format("{0:0.####}", blackness) + "," + string.Format("{0:0.####}", blueness) + "," + string.Format("{0:0.####}", redness) + ",");
+                nevus = new Nevus(name,"", scaledArea, borderEvenRate, assymmetryRate, colorDeviation, blackness, blueness, redness,path);
+                writeInfo(nevus);
                 areaText.Text = string.Format("{0:0.##}", scaledArea);
                 borderVariationText.Text = string.Format("{0:0.##}", borderEvenRate);
                 colorDeviationText.Text = string.Format("{0:0.##}", colorDeviation);

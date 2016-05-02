@@ -15,7 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)ImageProc.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Methods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mask.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nevus.cs" />
   </ItemGroup>

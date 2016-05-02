@@ -21,6 +21,7 @@ using Windows.Storage.Pickers;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Popups;
 using Windows.UI.Core;
+using MySkin_Alpha.Data;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
 
@@ -34,6 +35,7 @@ namespace MySkin_Alpha
     {
         public Size captureElementSize;
         public StorageFile file;
+        public string description;
         public double interLine;
     }
 
@@ -41,6 +43,7 @@ namespace MySkin_Alpha
     {
         public static MainPage Current;
         public List<double> captureElementSize;
+        private bool flash = true;
         List<Nevus> nevData;
         public MediaCapture MyMediaCapture { get; private set; }
         private readonly DisplayInformation displayInformation = DisplayInformation.GetForCurrentView();
@@ -163,6 +166,7 @@ namespace MySkin_Alpha
             //});
             //SetResolution(MediaStreamType.VideoPreview);
             IReadOnlyList<IMediaEncodingProperties> resolutions = MyMediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(MediaStreamType.Photo);
+
             // set used resolution
             await MyMediaCapture.VideoDeviceController.SetMediaStreamPropertiesAsync(MediaStreamType.Photo, resolutions[0]);
 
@@ -317,7 +321,9 @@ namespace MySkin_Alpha
 
         private async void PhotoButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            focusBrackets.Visibility = Visibility.Visible;
             await TakePhotoAsync();
+            focusBrackets.Visibility = Visibility.Collapsed;
         }
 
         private async void myCaptureElement_Tapped(object sender, TappedRoutedEventArgs e)
@@ -459,10 +465,27 @@ namespace MySkin_Alpha
             if (!focused)
                 if (MyMediaCapture.VideoDeviceController.FocusControl.Supported)
                     await MyMediaCapture.VideoDeviceController.FocusControl.FocusAsync();
+            if (flash)
+            {
+                if (MyMediaCapture.VideoDeviceController.FlashControl.Supported)
+                {
+                    MyMediaCapture.VideoDeviceController.FlashControl.Auto = true;
+                    MyMediaCapture.VideoDeviceController.FlashControl.Enabled = true;
+                }
+            }
+            else
+            {
+                if (MyMediaCapture.VideoDeviceController.FlashControl.Supported)
+                {
+                    MyMediaCapture.VideoDeviceController.FlashControl.Auto = false;
+                    MyMediaCapture.VideoDeviceController.FlashControl.Enabled = false;
+                }
+            }
             try
             {
 
                 //SetResolution(MediaStreamType.Photo);
+                
                 await MyMediaCapture.CapturePhotoToStreamAsync(ImageEncodingProperties.CreateJpeg(), stream);
 
                 var photoOrientation = ConvertOrientationToPhotoOrientation(deviceOrientation);
@@ -472,21 +495,13 @@ namespace MySkin_Alpha
             catch (Exception ex)
             {
             }
+            stream.Dispose();
         }
 
         #endregion
 
         #region actions
-
-        private double CalculateScaleFactor(Size renderSize)
-        {
-            double w = refLine1.RenderSize.Width;
-            double h = renderSize.Height;
-            double dist = refLine2.Y1 - refLine1.Y1;
-
-
-            return 1;
-        }
+        
 
 
         //private async void captureButton_Click(object sender, RoutedEventArgs e)
@@ -543,6 +558,25 @@ namespace MySkin_Alpha
         private void dataBaseButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(DatabasePage));
+        }
+
+        private void flushButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            DataSource.ClearJSON();
+        }
+
+        private void FlashButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if(flash)
+            {
+                flash = false;
+                symbol.Symbol = Symbol.Dislike;
+            }
+            else
+            {
+                flash = true;
+                symbol.Symbol = Symbol.Like;
+            }
         }
     }
 }

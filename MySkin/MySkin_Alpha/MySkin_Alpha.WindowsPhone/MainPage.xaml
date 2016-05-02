@@ -34,9 +34,10 @@
         </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
-            <RowDefinition Height="55*"/>
-            <RowDefinition Height="74*"/>
-            <RowDefinition Height="79*"/>
+            <RowDefinition Height="153*"/>
+            <RowDefinition Height="236*"/>
+            <RowDefinition Height="125*"/>
+            <RowDefinition Height="67*"/>
         </Grid.RowDefinitions>
 
         <!-- Back button and page title -->
@@ -50,18 +51,20 @@
         </Grid>
 
         <!--<Frame x:Name="ScenarioFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Grid.Row="1"/>-->
-        <CaptureElement Name="myCaptureElement" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Margin="0,0,0,-0.111" Grid.RowSpan="3" Tapped="myCaptureElement_Tapped"/>
-        <Grid Grid.Row="1" Name="Second" Grid.RowSpan="3" Margin="0,0,0,-0.111">
+        <CaptureElement Name="myCaptureElement" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.RowSpan="4" Tapped="myCaptureElement_Tapped"/>
+        <Grid Grid.Row="1" Name="Second" Grid.RowSpan="4">
             <Canvas Name="Cross" VerticalAlignment="Center" Height="80" Width="80">
                 <Line X1="60" Y1="20" X2="20" Y2="60" Stroke="Red" StrokeThickness="1"></Line>
                 <Line X1="20" Y1="20" X2="60" Y2="60" Stroke="Red" StrokeThickness="1"></Line>
+                <Line X1="40" Y1="0" X2="40" Y2="80" Stroke="White" StrokeThickness="1"></Line>
+                <Line X1="0" Y1="40" X2="80" Y2="40" Stroke="White" StrokeThickness="1"></Line>
                 <!--<Line X1="0" Y1="0" X2="80" Y2="0" Stroke="Red" StrokeThickness="2"></Line>-->
                 <!--<Line X1="0" Y1="0" X2="0" Y2="80" Stroke="Red" StrokeThickness="2"></Line>-->
                 <!--<Line X1="80" Y1="80" X2="0" Y2="80" Stroke="Red" StrokeThickness="2"></Line>-->
                 <!--<Line X1="80" Y1="80" X2="80" Y2="0" Stroke="Red" StrokeThickness="2"></Line>-->
             </Canvas>
         </Grid>
-        <Grid Grid.Row="2" Name="Meter">
+        <Grid Grid.Row="2" Name="Meter" Margin="0,0.5,0,3.333">
 
             <Canvas Name="Lines" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                 <!--<Line X1="60" Y1="65" X2="100" Y2="65" Stroke="Red" StrokeThickness="2"></Line>
@@ -88,26 +91,40 @@
                 <Line X1="190" Y1="20" X2="190" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
                 <Line X1="280" Y1="0" X2="280" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
                 <Line X1="250" Y1="20" X2="250" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
-
+                <Button Name="FlashButton" Tapped="FlashButton_Tapped" IsEnabled="True" >
+                    <Viewbox MaxHeight="40" MaxWidth="40">
+                        <SymbolIcon Name="symbol" Symbol="Like"/>
+                    </Viewbox>
+                </Button>
             </Canvas>
         </Grid>
 
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="2" Margin="0,225.5,0,0" Grid.RowSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="147*"/>
+                <RowDefinition Height="55*"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Name="PhotoButton" HorizontalAlignment="Right"   VerticalAlignment="Center" Tapped="PhotoButton_Tapped" IsEnabled="True" Margin="0,0,20,0">
+            <Button Grid.Column="0" Name="PhotoButton" HorizontalAlignment="Right"   VerticalAlignment="Center" Tapped="PhotoButton_Tapped" IsEnabled="True" Margin="0,67,20,11.594">
                 <Viewbox MaxHeight="40" MaxWidth="40">
                     <SymbolIcon Symbol="Camera"/>
                 </Viewbox>
             </Button>
-            <Button Grid.Column="1" Name="dataBaseButton" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0" Tapped="dataBaseButton_Tapped">
+            <Button Grid.Column="1" Name="dataBaseButton" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,67,0,11.594" Tapped="dataBaseButton_Tapped">
                 <Viewbox MaxHeight="40" MaxWidth="40">
                     <SymbolIcon Symbol="Folder"/>
                 </Viewbox>
             </Button>
+
         </Grid>
+        <Button Name="flushButton" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" Tapped="flushButton_Tapped" Grid.ColumnSpan="2" >
+            <Viewbox MaxHeight="40" MaxWidth="40">
+                <SymbolIcon Symbol="Remove"/>
+            </Viewbox>
+        </Button>
         <TextBlock 
                 x:Name="focusBrackets"
             Grid.Row="2"
@@ -115,7 +132,7 @@
             HorizontalAlignment="Center"
                 Text="[   ]" 
                 FontSize="60"
-            Visibility="Collapsed" Margin="157,111,157,39.222"/>
+            Visibility="Collapsed" Margin="200,155.5,200,80.333" Height="0" Width="0"/>
         <!--<Button x:Name="openButton" Content="Open" HorizontalAlignment="Center" Height="58" VerticalAlignment="Center" Width="109" Click="openButton_Click" Margin="281,522,10,0" RenderTransformOrigin="0.5,0.5" Grid.Row="1"/>-->
     </Grid>
 </Page>

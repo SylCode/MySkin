@@ -13,7 +13,7 @@ namespace MySkin_Alpha.Data
 
     public class DataItem
     {
-        public DataItem(string uniqueName, string description, double area, double borderVariation, double assymmetryRate, double colorVariation, double blackness, double blueness, double redness, string imagePath, string safe, double risk)
+        public DataItem(string uniqueName, string description, double area, double borderVariation, double assymmetryRate, double colorVariation, double blackness, double blueness, double redness, string imagePath, string safe)
         {
             Name = uniqueName;
             this.description = description;
@@ -26,7 +26,6 @@ namespace MySkin_Alpha.Data
             this.redness = redness;
             this.imagePath = imagePath;
             this.safe = safe;
-            this.risk = risk;
         }
 
         public string Name { get; private set; }
@@ -40,7 +39,6 @@ namespace MySkin_Alpha.Data
         public double redness { get; private set; }
         public string imagePath { get; private set; }
         public string safe { get; private set; }
-        public double risk { get; private set; }
 
         public override string ToString()
         {
@@ -85,7 +83,7 @@ namespace MySkin_Alpha.Data
         {
             get { return this._groups; }
         }
-        
+
 
         public static async Task<IEnumerable<DataGroup>> GetGroupsAsync()
         {
@@ -151,7 +149,6 @@ namespace MySkin_Alpha.Data
                 jsonObj.SetNamedValue("redness", JsonValue.CreateNumberValue(nev.redness));
                 jsonObj.SetNamedValue("imagePath", JsonValue.CreateStringValue(nev.imagePath));
                 jsonObj.SetNamedValue("safe", JsonValue.CreateStringValue(nev.safe));
-                jsonObj.SetNamedValue("risk", JsonValue.CreateNumberValue(nev.risk));
                 jsonNevuses.Add(jsonObj);
             }
             jsonGroupMole["data"] = jsonNevuses;
@@ -199,7 +196,7 @@ namespace MySkin_Alpha.Data
                 //StorageFile f = await ApplicationData.Current.LocalFolder.GetFileAsync("Data.json");
                 StorageFile f = await StorageFile.GetFileFromApplicationUriAsync(dataUri);
                 await FileIO.WriteTextAsync(f, data);
-                
+
             }
             catch (FileNotFoundException)
             {
@@ -214,9 +211,9 @@ namespace MySkin_Alpha.Data
         public static async void RemoveItem(string id)
         {
             int ct = 0;
-            foreach(DataItem item in _sampleDataSource.Groups[0].Items)
+            foreach (DataItem item in _sampleDataSource.Groups[0].Items)
             {
-                if (item.Name==id)
+                if (item.Name == id)
                 {
                     StorageFile f = await StorageFile.GetFileFromPathAsync(item.imagePath);
                     await f.DeleteAsync(StorageDeleteOption.PermanentDelete);
@@ -274,9 +271,8 @@ namespace MySkin_Alpha.Data
                             itemObject["blueness"].GetNumber(),
                             itemObject["redness"].GetNumber(),
                             itemObject["imagePath"].GetString(),
-                            itemObject["safe"].GetString(),
-                            itemObject["risk"].GetNumber());
-                        this.ListNevus.Add(new Nevus(item.Name, item.description, item.area, item.borderVariation,item.assymmetryRate, item.colorVariation, item.blackness, item.blueness, item.redness, item.imagePath));
+                            itemObject["safe"].GetString());
+                        this.ListNevus.Add(new Nevus(item.Name, item.description, item.area, item.borderVariation, item.assymmetryRate, item.colorVariation, item.blackness, item.blueness, item.redness, item.imagePath));
                         group.Items.Add(item);
                     }
                     this.Groups.Add(group);

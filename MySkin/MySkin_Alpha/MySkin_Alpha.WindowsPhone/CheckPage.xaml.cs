@@ -1,14 +1,17 @@
 ﻿using MySkin_Alpha.Common;
+using MySkin_Alpha.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -69,8 +72,9 @@ namespace MySkin_Alpha
         /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested and
         /// a dictionary of state preserved by this page during an earlier
         /// session.  The state will be null the first time a page is visited.</param>
-        private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
+            await DataSource.init();
         }
 
         /// <summary>
@@ -134,9 +138,88 @@ namespace MySkin_Alpha
 
         #endregion
 
-        private void processButton_Click(object sender, RoutedEventArgs e)
+
+        private async Task<StorageFile> saveImage(WriteableBitmap WB, string name)
         {
-            Frame.Navigate(typeof(ImagePage), par);
+            string FileName = name;
+            StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(FileName);
+            Guid BitmapEncoderGuid = BitmapEncoder.JpegEncoderId;
+            using (IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoderGuid, stream);
+                Stream pixelStream = WB.PixelBuffer.AsStream();
+                byte[] pixels = new byte[pixelStream.Length];
+                await pixelStream.ReadAsync(pixels, 0, pixels.Length);
+                encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore,
+                          (uint)WB.PixelWidth,
+                          (uint)WB.PixelHeight,
+                          96.0,
+                          96.0,
+                          pixels);
+                await encoder.FlushAsync();
+            }
+            return file;
+        }
+
+        private async void processButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new ContentDialog()
+            {
+                Title = "Details",
+                MaxWidth = this.ActualWidth,
+                MaxHeight = this.ActualHeight / 2
+            };
+
+            var panel = new StackPanel();
+            TextBox tb = new TextBox
+            {
+                Header = "Nevus description",
+                TextWrapping = TextWrapping.Wrap,
+            };
+            panel.Children.Add(tb);
+            
+            dialog.Content = panel;
+
+            // The CanExecute of the Command does not enable/disable the button :-(
+            dialog.PrimaryButtonText = "OK";
+            var cmd = new Common.RelayCommand(() =>
+            {
+                par.description = tb.Text;
+            });
+
+            dialog.PrimaryButtonCommand = cmd;
+
+            dialog.SecondaryButtonText = "Cancel";
+            //dialog.SecondaryButtonCommand = new Common.RelayCommand(() =>
+            //{
+            //    Frame.Navigate(typeof)
+            //});
+            processButton.Visibility = Visibility.Collapsed;
+            cancelButton.Visibility = Visibility.Collapsed;
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                progressRing.IsActive = true;
+                progressRing.Visibility = Visibility.Visible;
+                //mainImage.Source = null;
+                ImageProcessor proc = new ImageProcessor(par);
+                await proc.go();
+                progressRing.IsActive = false;
+                processButton.Visibility = Visibility.Visible;
+                cancelButton.Visibility = Visibility.Visible;
+                if (proc.resizedImage != null)
+                {
+                    par.file = await saveImage(proc.resizedImage, par.file.Name);
+                    //LoadImage(par.file);
+                    //string id = proc.UniqueId;
+                    progressRing.Visibility = Visibility.Collapsed;
+                    Frame.Navigate(typeof(ImagePage), proc.UniqueId);
+                }
+            }
+            else if (result == ContentDialogResult.Secondary)
+            {
+                Frame.Navigate(typeof(MainPage));
+            }
         }
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)

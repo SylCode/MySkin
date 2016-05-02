@@ -120,7 +120,22 @@
 
             </Canvas>
         </Grid>
-
+        <Grid Grid.Row="3" Grid.Column="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <!--<Button Grid.Column="0" Name="PhotoButton" HorizontalAlignment="Right"   VerticalAlignment="Center" Tapped="PhotoButton_Tapped" IsEnabled="True" Margin="0,0,20,0">
+                <Viewbox MaxHeight="40" MaxWidth="40">
+                    <SymbolIcon Symbol="Camera"/>
+                </Viewbox>
+            </Button>-->
+            <Button Grid.Column="1" Name="dataBaseButton" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0" Tapped="dataBaseButton_Tapped">
+                <Viewbox MaxHeight="40" MaxWidth="40">
+                    <SymbolIcon Symbol="Folder"/>
+                </Viewbox>
+            </Button>
+        </Grid>
         <Button x:Name="captureButton" Visibility="Visible" IsEnabled="True" Content="Capture" HorizontalAlignment="Center" Grid.Row="3" Click="captureButton_Click" Grid.Column="0" Grid.ColumnSpan="3" Height="38" Width="87" />
     </Grid>
 </Page>

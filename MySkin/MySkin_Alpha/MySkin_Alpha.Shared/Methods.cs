@@ -5,10 +5,11 @@ using Windows.Foundation;
 using System.Collections.Generic;
 using System.Drawing;
 using Accord;
+using Accord.Imaging;
 
 namespace MySkin_Alpha
 {
-    class ImageProc
+    class Methods
     {
         int width, height;
         private int calcOffset;
@@ -18,7 +19,7 @@ namespace MySkin_Alpha
         public double redness = 0;
         public bool blueParts = false;
 
-        public ImageProc(int w, int h)
+        public Methods(int w, int h)
         {
             width = w;
             height = h;
@@ -477,7 +478,7 @@ namespace MySkin_Alpha
             return output;
         }
 
-        public byte[] analyzeBlob(byte[] gray,byte[] input, Rectangle boundingRectangle, List<IntPoint> pointsL, List<IntPoint> pointsR, List<IntPoint> pointsU, List<IntPoint> pointsD/*, out Nevus nevus*/)
+        public byte[] analyzeBlob(byte[] gray,byte[] input, Rectangle boundingRectangle, List<IntPoint> pointsL, List<IntPoint> pointsR, List<IntPoint> pointsU, List<IntPoint> pointsD/*, out Nevus nevus*/, out double assymmetryRate)
         {
             int imageOffset = 0;
             int d = 0;
@@ -485,9 +486,18 @@ namespace MySkin_Alpha
             byte[] sec = new byte[gray.Length];
             byte[] final = new byte[gray.Length];
             byte[] init = new byte[gray.Length];
+            double[] dims = new double[2];
             List<double> blobPointColorsR = new List<double>();
             List<double> blobPointColorsG = new List<double>();
             List<double> blobPointColorsB = new List<double>();
+
+            dims[0] = pointsL[pointsL.Count / 2].DistanceTo(pointsR[pointsR.Count / 2]);
+            dims[1] = pointsU[pointsU.Count / 2].DistanceTo(pointsD[pointsD.Count / 2]);
+            if (dims[0] > dims[1])
+            {
+                assymmetryRate = dims[0] / dims[1];
+            }
+            else assymmetryRate = dims[1] / dims[0];
 
             for (int i=0; i<gray.Length; i++)
             {
@@ -679,6 +689,24 @@ namespace MySkin_Alpha
 
 
             return final;
+        }
+
+        public int getMaxRectangle(Rectangle[] rects, int imageWidth, int imageHeight)
+        {
+            int ct = 0, index = 0;
+            float min = imageWidth * imageHeight;
+            IntPoint p1 = new IntPoint(imageWidth / 2, imageHeight / 2);
+
+            foreach (Rectangle rect in rects)
+            {
+                if (p1.DistanceTo(new IntPoint(rect.Center().X, rect.Center().Y)) < min)
+                {
+                    min = p1.DistanceTo(new IntPoint(rect.Center().X, rect.Center().Y));
+                    index = ct;
+                }
+                ct++;
+            }
+            return index;
         }
     }
 }

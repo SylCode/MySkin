@@ -1,56 +1,36 @@
 ﻿using MySkin_Alpha.Common;
+using MySkin_Alpha.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.ApplicationModel;
-using Windows.UI;
-using Windows.Graphics.Imaging;
-using System.Threading.Tasks;
 
-//using AForge.Imaging;
-//using AForge.Imaging.Filters;
-//using AForge.Math;
-using Accord.Imaging;
-using Accord.Imaging.Filters;
-using Accord.Math;
-using System.Drawing;
-using Accord;
-using Windows.UI.Popups;
-using Windows.UI.Xaml.Media.Imaging;
-using MySkin_Alpha.Data;
-
-// The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
+// The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234237
 
 namespace MySkin_Alpha
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// A basic page that provides characteristics common to most applications.
     /// </summary>
-    public sealed partial class ImagePage : Page
+    public sealed partial class DatabasePage : Page
     {
+
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        private string id;
-        //NevParams par;
-        //private WriteableBitmap image, resizedImage;
-        //private Bitmap Bimage;
-        //private StorageFile file;
-        //int originalWidth, originalHeigth;
-        //private byte[] pixelData;
-        //private Methods processor;
-        //uint width, height;
-        //double scale = 0.25;
-        //double scaleFactor;
 
-
-        #region base
+        /// <summary>
+        /// This can be changed to a strongly typed view model.
+        /// </summary>
         public ObservableDictionary DefaultViewModel
         {
             get { return this.defaultViewModel; }
@@ -66,7 +46,7 @@ namespace MySkin_Alpha
         }
 
 
-        public ImagePage()
+        public DatabasePage()
         {
             this.InitializeComponent();
             this.navigationHelper = new NavigationHelper(this);
@@ -87,9 +67,8 @@ namespace MySkin_Alpha
         /// session. The state will be null the first time a page is visited.</param>
         private async void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            DataItem item = await DataSource.GetItemAsync(id);
-            StorageFile file = await StorageFile.GetFileFromPathAsync(item.imagePath/*.Replace("/",@"\")*/);
-            LoadImage(file);
+            var DataGroup = await DataSource.GetGroupsAsync();
+            this.DefaultViewModel["Section3Items"] = DataGroup;
         }
 
         /// <summary>
@@ -117,58 +96,14 @@ namespace MySkin_Alpha
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            id = (string)e.Parameter;
-            //ProgressRing.IsActive = true;
             navigationHelper.OnNavigatedTo(e);
-            //par = (NevParams)e.Parameter;
-            //LoadImage(par.file);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             navigationHelper.OnNavigatedFrom(e);
-
         }
 
         #endregion
-        #endregion
-
-        #region initMethods
-
-        private async void LoadImage(StorageFile file)
-        {
-            var imageData = await file.OpenReadAsync();
-            var decoder = await BitmapDecoder.CreateAsync(imageData);
-            uint width = decoder.OrientedPixelWidth;
-            uint height = decoder.OrientedPixelHeight;
-            WriteableBitmap image = new WriteableBitmap(Convert.ToInt32(width), Convert.ToInt32(height));
-            imageData.Seek(0);
-            await image.SetSourceAsync(imageData);
-            
-            setMainImage(image);
-        }
-        
-
-
-        private async System.Threading.Tasks.Task<Bitmap> getBitmapFromFile(StorageFile file)
-        {
-            Bitmap bitmap;
-
-            using (var stream = await file.OpenStreamForReadAsync())
-            {
-                bitmap = (Bitmap)System.Drawing.Image.FromStream(stream);
-            }
-            return bitmap;
-        }
-        
-
-        #endregion
-
-       
-        private void setMainImage(WriteableBitmap image)
-        {
-            //mainImage.Source = image;
-            //mainImage.UpdateLayout();
-        }
     }
 }

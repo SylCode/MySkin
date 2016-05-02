@@ -7,27 +7,47 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:MySkin_Alpha.Data"
     DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
-    d:DataContext="{Binding Source={d:DesignData Source=/DataModel/Data.json, Type=data:DataSource}}"
+    d:DataContext="{Binding Source={d:DesignData Source=DataModel/Data.json, Type=data:DataSource}}"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
         <x:String x:Key="AppName">MySkin</x:String>
         <DataTemplate x:Key="StandardTripleLineItemTemplate">
-            <Grid>
+            <Grid HorizontalAlignment="Stretch" >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="250"/>
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="120"/>
+                </Grid.RowDefinitions>
 
-                <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,9.5,0,0" Grid.Column="0" HorizontalAlignment="Left">
-                    <Image Source="{Binding ImagePath}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}" Height="79" Width="79"/>
+                <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"  Grid.Column="0" HorizontalAlignment="Left">
+                    <Image Source="{Binding imagePath}" Stretch="Fill" Height="100" Width="100"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="14.5,0,0,0">
-                    <TextBlock Text="{Binding Title}" Style="{ThemeResource ListViewItemTextBlockStyle}"/>
-                    <TextBlock Text="{Binding Description}" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}" />
-                    <TextBlock Text="{Binding Subtitle}" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" />
+                    <TextBlock Text="{Binding description}" Style="{ThemeResource ListViewItemTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Name}" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}" />
+                    <TextBlock Text="{Binding safe}" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" />
+                    <ProgressBar Height="15" Maximum="100" Value="{Binding risk}"></ProgressBar>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Low" HorizontalAlignment="Left" Grid.Column="0" />
+                        <TextBlock Text="High" HorizontalAlignment="Right" Grid.Column="1"/>
+                    </Grid>
                 </StackPanel>
+                <FlyoutBase.AttachedFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem x:Name="DeleteButton"
+                                                Text="Delete"
+                                                Click="DeleteButton_Click"
+                                        Width="Auto"/>
+                    </MenuFlyout>
+                </FlyoutBase.AttachedFlyout>
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="StandardDoubleLineItemTemplate">
@@ -93,19 +113,20 @@
         </Grid>-->
         <Grid Grid.Row="1" Grid.RowSpan="2">
             <Hub>
-                <HubSection x:Uid="HubSection1" Header="Moles"
-                        DataContext="{Binding Groups[0]}">
+                <HubSection x:Uid="HubSection1" Header="Moles" DataContext="{Binding Groups[0]}">
                     <DataTemplate>
                         <ListView 
                         AutomationProperties.AutomationId="ItemListViewSection3"
                         AutomationProperties.Name="Items In Group"
                         SelectionMode="None"
                         IsItemClickEnabled="True"
-                        ItemsSource="{Binding }"
+                        ItemsSource="{Binding Items}"
                         ItemTemplate="{StaticResource StandardTripleLineItemTemplate}"
                         ItemClick="ItemView_ItemClick"
+                        Holding="ListView_Holding"
                         ContinuumNavigationTransitionInfo.ExitElementContainer="True">
                         </ListView>
+                        
                     </DataTemplate>
                 </HubSection>
             </Hub>
