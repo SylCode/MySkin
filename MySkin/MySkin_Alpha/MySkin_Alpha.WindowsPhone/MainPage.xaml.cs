@@ -570,12 +570,12 @@ namespace MySkin_Alpha
             if(flash)
             {
                 flash = false;
-                symbol.Symbol = Symbol.Dislike;
+                symbol.Symbol = Symbol.View;
             }
             else
             {
                 flash = true;
-                symbol.Symbol = Symbol.Like;
+                symbol.Symbol = Symbol.Target;
             }
         }
     }

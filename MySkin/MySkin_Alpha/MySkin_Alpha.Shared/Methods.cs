@@ -478,7 +478,7 @@ namespace MySkin_Alpha
             return output;
         }
 
-        public byte[] analyzeBlob(byte[] gray,byte[] input, Rectangle boundingRectangle, List<IntPoint> pointsL, List<IntPoint> pointsR, List<IntPoint> pointsU, List<IntPoint> pointsD/*, out Nevus nevus*/, out double assymmetryRate)
+        public byte[] analyzeBlob(byte[] gray,byte[] input, Rectangle boundingRectangle, List<IntPoint> pointsL, List<IntPoint> pointsR, List<IntPoint> pointsU, List<IntPoint> pointsD, out double assymmetryRate, out byte[] border, out byte[] color)
         {
             int imageOffset = 0;
             int d = 0;
@@ -486,6 +486,9 @@ namespace MySkin_Alpha
             byte[] sec = new byte[gray.Length];
             byte[] final = new byte[gray.Length];
             byte[] init = new byte[gray.Length];
+            border = new byte[gray.Length];
+            color = new byte[gray.Length];
+            
             double[] dims = new double[2];
             List<double> blobPointColorsR = new List<double>();
             List<double> blobPointColorsG = new List<double>();
@@ -505,6 +508,8 @@ namespace MySkin_Alpha
                 sec[i] = gray[i];
                 init[i] = gray[i];
                 final[i] = gray[i];
+                border[i] = gray[i];
+                color[i] = gray[i];
             }
 
             for (int i = 0; i < pointsL.Count; i++)
@@ -593,10 +598,12 @@ namespace MySkin_Alpha
                             blobPointColorsB.Add(gray[i]);
                             blobPointColorsG.Add(gray[i + 1]);
                             blobPointColorsR.Add(gray[i + 2]);
-
-
-
                         }
+                        color[i] = fir[i];
+                        color[i+1] = fir[i+1];
+                        color[i+2] = fir[i+2];
+                        color[i+3] = fir[i+3];
+
                     }
                 }
             }
@@ -608,11 +615,20 @@ namespace MySkin_Alpha
                 final[imageOffset + 1] = 255;
                 final[imageOffset + 2] = 0;
                 final[imageOffset + 3] = 0;
+                border[imageOffset] = 0;
+                border[imageOffset + 1] = 0;
+                border[imageOffset + 2] = 255;
+                border[imageOffset + 3] = 0;
+
                 imageOffset = (pointsR[i].Y * width) * 4 + pointsR[i].X * 4;
                 final[imageOffset] = 0;
                 final[imageOffset + 1] = 255;
                 final[imageOffset + 2] = 0;
                 final[imageOffset + 3] = 0;
+                border[imageOffset] = 0;
+                border[imageOffset + 1] = 0;
+                border[imageOffset + 2] = 255;
+                border[imageOffset + 3] = 0;
             }
 
             for (int i = 0; i < pointsU.Count; i++)

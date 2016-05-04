@@ -35,7 +35,7 @@ namespace MySkin_Alpha
     {
         private NevParams par;
         private WriteableBitmap image;
-        public WriteableBitmap resizedImage;
+        public WriteableBitmap resizedImage, border_image, color_image;
         private Bitmap Bimage;
         private StorageFile file;
         int originalWidth, originalHeigth;
@@ -154,12 +154,12 @@ namespace MySkin_Alpha
             double colorDeviation = 0.0f;
 
             bitmap = new WriteableBitmap((int)width, (int)height);
-            Contrast = new WriteableBitmap((int)width, (int)height);
-            BinaryGen = new WriteableBitmap((int)width, (int)height);
-            BinaryLoc = new WriteableBitmap((int)width, (int)height);
+            color_image = new WriteableBitmap((int)width, (int)height);
+            border_image = new WriteableBitmap((int)width, (int)height);
+            //BinaryLoc = new WriteableBitmap((int)width, (int)height);
             EdgeGen = new WriteableBitmap((int)width, (int)height);
-            EdgeLoc = new WriteableBitmap((int)width, (int)height);
-            Grayscale = new WriteableBitmap((int)width, (int)height);
+            //EdgeLoc = new WriteableBitmap((int)width, (int)height);
+            //Grayscale = new WriteableBitmap((int)width, (int)height);
 
 
 
@@ -216,13 +216,18 @@ namespace MySkin_Alpha
                 blobCounter.GetBlobsTopAndBottomEdges(nev, out pointsU, out pointsD);
 
                 double assymmetryRate;
-                pixelData = processor.analyzeBlob(pixelData, edgeGen, aimedRectangle, pointsL, pointsR, pointsU, pointsD,out assymmetryRate/*, out nevus*/);
+                byte[] border, color;
+                pixelData = processor.analyzeBlob(pixelData, edgeGen, aimedRectangle, pointsL, pointsR, pointsU, pointsD,out assymmetryRate, out border, out color);
                 colorDeviation = processor.colorVariation;
                 area = nev.Area;
                 double blackness = processor.blackness;
                 double blueness = processor.blueness;
                 double redness = processor.redness;
                 await writeBitmap(bitmap, pixelData);
+                await writeBitmap(color_image, color);
+                await writeBitmap(border_image, border);
+                color_image = color_image.Crop(aimedRectangle.X - 20, aimedRectangle.Y - 20, aimedRectangle.Width + 40, aimedRectangle.Height + 40);
+                border_image = border_image.Crop(aimedRectangle.X - 20, aimedRectangle.Y - 20, aimedRectangle.Width + 40, aimedRectangle.Height + 40);
 
                 Accord.Point center = nev.CenterOfGravity;
 
@@ -237,11 +242,13 @@ namespace MySkin_Alpha
                 asymetric = borderEvenRate > 100 ? true : false;
                 big = scaledArea > 25 ? true : false;
 
-                bitmap = bitmap.Crop(aimedRectangle.X - 150, aimedRectangle.Y - 150, aimedRectangle.Width + 300, aimedRectangle.Height + 300);
+                bitmap = bitmap.Crop(aimedRectangle.X - 20, aimedRectangle.Y - 20, aimedRectangle.Width + 40, aimedRectangle.Height + 40);
                 StorageFile file = await ApplicationData.Current.LocalFolder.CreateFileAsync(UniqueId, CreationCollisionOption.ReplaceExisting);
+                await ApplicationData.Current.LocalFolder.CreateFileAsync("color_"+UniqueId, CreationCollisionOption.ReplaceExisting);
+                await ApplicationData.Current.LocalFolder.CreateFileAsync("border_"+UniqueId, CreationCollisionOption.ReplaceExisting);
                 //await saveImage(bitmap, UniqueId);
 
-                nevus = new Nevus(UniqueId, par.description, scaledArea, borderEvenRate,assymmetryRate, colorDeviation, blackness, blueness, redness, file.Path/*.Replace("\\", "/")*/);
+                nevus = new Nevus(UniqueId, par.description, scaledArea, borderEvenRate,assymmetryRate, colorDeviation, blackness, blueness, redness, file.Path);
                 writeInfo(nevus);
                 //writeInfo(string.Format("{0:0.####}", scaledArea) + "," + string.Format("{0:0.####}", borderEvenRate) + "," + string.Format("{0:0.####}", colorDeviation) + "," + string.Format("{0:0.####}", blackness) + "," + string.Format("{0:0.####}", blueness) + "," + string.Format("{0:0.####}", redness) + ",");
                 //MessageDialog dialog = new MessageDialog("Area = " + string.Format("{0:0.##}", scaledArea) + " mm. " + "\nBorderVar = " + string.Format("{0:0.##}", borderEvenRate) + "; \nColorDev = " + string.Format("{0:0.##}", colorDeviation) + "; \nDarkness = " + string.Format("{0:0.##}", blackness) + "; \nBlueness = " + string.Format("{0:0.##}", blueness) + "; \nRedness = " + string.Format("{0:0.##}", redness) + " \nAsymmetric = " + asymetric + " \nBigger than norm = " + big);
@@ -250,7 +257,7 @@ namespace MySkin_Alpha
             }
             else
             {
-                MessageDialog dialog = new MessageDialog("No moles were found, please, try another photo.");
+                MessageDialog dialog = new MessageDialog("No moles were found, please, try another photo. Perhaps without the flash");
                 await dialog.ShowAsync();
                 bitmap = null;
             }

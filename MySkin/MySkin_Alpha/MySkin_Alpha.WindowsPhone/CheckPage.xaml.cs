@@ -6,12 +6,14 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Appointments;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -210,9 +212,56 @@ namespace MySkin_Alpha
                 if (proc.resizedImage != null)
                 {
                     par.file = await saveImage(proc.resizedImage, par.file.Name);
+                    await saveImage(proc.color_image, "color_"+par.file.Name);
+                    await saveImage(proc.border_image, "border_"+par.file.Name);
                     //LoadImage(par.file);
                     //string id = proc.UniqueId;
                     progressRing.Visibility = Visibility.Collapsed;
+                    Nevus n = DataSource.GetNevusById(par.file.Name);
+                    if (n.safe == "Attention")
+                    {
+                        MessageDialog dial = new MessageDialog("Your mole was categorized as '" + n.safe + "' and needs to be checked one more time in 2 month. MySkin will create a reminder");
+                        await dial.ShowAsync();
+                        Appointment appointment = new Appointment();
+                        appointment.StartTime = DateTime.Now;
+                        appointment.Duration = new TimeSpan(61, 0, 0, 0);
+                        appointment.Subject = "MySkin Mole Check";
+                        appointment.Details = "Please check the mole " + n.name + ": " + n.description + "via MySkin";
+                        appointment.AllDay = true;
+                        appointment.Reminder = new TimeSpan(0, 15, 0);
+                        await AppointmentManager.ShowAddAppointmentAsync(appointment, new Windows.Foundation.Rect(0, 0, appoint.Width, appoint.Height), Placement.Default);
+                    }
+                    else if (n.safe == "Caution")
+                    {
+                        MessageDialog dial = new MessageDialog("Your mole was categorized as '" + n.safe + "' and needs to be checked one more time in 1 month. MySkin will create a reminder");
+                        await dial.ShowAsync();
+                        Appointment appointment = new Appointment();
+                        appointment.StartTime = DateTime.Now;
+                        appointment.Duration = new TimeSpan(30, 0, 0, 0);
+                        appointment.Subject = "MySkin Mole Check";
+                        appointment.Details = "Please check the mole " + n.name + ": " + n.description + "via MySkin";
+                        appointment.AllDay = true;
+                        appointment.Reminder = new TimeSpan(0, 15, 0);
+                        await AppointmentManager.ShowAddAppointmentAsync(appointment, new Windows.Foundation.Rect(0, 0, appoint.Width, appoint.Height), Placement.Default);
+                    }
+                    else if (n.safe == "Dangerous" || n.safe == "Extremely Dangerous")
+                    {
+                        MessageDialog dial = new MessageDialog("Your mole has shown some dangerous features and was categorized as '" + n.safe + "' and needs to be checked by dermatologist ASAP. MySkin will create a reminder");
+                        await dial.ShowAsync();
+                        Appointment appointment = new Appointment();
+                        appointment.StartTime = DateTime.Now;
+                        appointment.Duration = new TimeSpan(3, 0, 0, 0);
+                        appointment.Subject = "MySkin Doctor Check";
+                        appointment.Details = "Please the dermatologist in order to check the mole - " + n.name + ": " + n.description;
+                        appointment.AllDay = true;
+                        appointment.Reminder = new TimeSpan(0, 15, 0);
+                        await AppointmentManager.ShowAddAppointmentAsync(appointment, new Windows.Foundation.Rect(0, 0, appoint.Width, appoint.Height), Placement.Default);
+                    }
+                    else
+                    {
+                        MessageDialog dial = new MessageDialog("Your mole was categorized as '" + n.safe + "'. See details.");
+                        await dial.ShowAsync();
+                    }
                     Frame.Navigate(typeof(ImagePage), proc.UniqueId);
                 }
             }

@@ -14,16 +14,10 @@
 
 
     <Page.Resources>
-        <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
         <x:String x:Key="AppName">MySkin</x:String>
         
     </Page.Resources>
 
-    <!--
-        This grid acts as a root panel for the page that defines two rows:
-        * Row 0 contains the back button and page title
-        * Row 1 contains the rest of the page layout
-    -->
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ChildrenTransitions>
             <TransitionCollection>
@@ -43,19 +37,18 @@
             <TextBlock x:Name="pageTitle" Text="{StaticResource AppName}" Style="{StaticResource HeaderTextBlockStyle}" 
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="10,0,166.167,9" Height="68" Grid.Column="1"/>
         </Grid>
-        <Grid Grid.Row="1">
+        <Grid Name="appoint" Grid.Row="1">
             <ListView
                 HorizontalAlignment="Stretch"
                 Name="DataList"
                 AutomationProperties.AutomationId="ItemListViewSection3"
                 AutomationProperties.Name="Nevus Data"
                 SelectionMode="None"
-                IsItemClickEnabled="False"
-                ItemsSource="{Binding Items}"
-                ItemClick="ItemView_ItemClick"
+                IsItemClickEnabled="True"
+                ItemClick="Data_ItemClick"
                 ContinuumNavigationTransitionInfo.ExitElementContainer="True">
-                <ListViewItem Name="Info">
-                    <Grid Width="370">
+                <ListViewItem>
+                    <Grid Width="370" Name="Info">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
@@ -66,7 +59,7 @@
                         </Border>
                         <StackPanel Grid.Column="1" Margin="14.5,0,0,0">
                             <TextBlock Name ="Name" Text="Name" Style="{ThemeResource ListViewItemTextBlockStyle}"/>
-                            <TextBlock Name="Safe" Text="Safe" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}" />
+                            <TextBlock Name="SafeRisk" Text="Safe" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}" />
                             <TextBlock Name="Risk" Text="Risk" HorizontalAlignment="Center" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" />
                             <ProgressBar Name="RiskProgressBar" Height="15" Maximum="100" Value="{Binding risk}"></ProgressBar>
                             <Grid>
@@ -80,20 +73,20 @@
                         </StackPanel>
                     </Grid>
                 </ListViewItem>
-                <ListViewItem Name="Assymmetry">
-                    <Grid Width="370">
+                <ListViewItem>
+                    <Grid Width="370" Name="Assymmetry">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
                         <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"  Grid.Column="0" HorizontalAlignment="Left">
-                            <Image Source="Assets/LightGray.png" Stretch="Fill" Height="100" Width="100"/>
+                            <Image Source="Assets/Mole_symmetry.png" Stretch="Fill" Height="100" Width="100"/>
                         </Border>
                         <StackPanel Grid.Column="1" Margin="14.5,0,0,0">
                             <TextBlock Text="Assymmetry" Style="{ThemeResource ListViewItemTextBlockStyle}"/>
+                            <TextBlock Name="SafeAssymmetry" Text="Data" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}" />
                             <TextBlock Text="Assymmetry Rate" HorizontalAlignment="Center" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" />
-                            <TextBlock Text="Safe" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}" />
                             <ProgressBar Name="AssymmetryProgressBar" Height="15" Maximum="100" Value="{Binding risk}"></ProgressBar>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -106,8 +99,8 @@
                         </StackPanel>
                     </Grid>
                 </ListViewItem>
-                <ListViewItem Name="Border">
-                    <Grid Width="370">
+                <ListViewItem>
+                    <Grid Width="370" Name="Border">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
@@ -118,7 +111,7 @@
                         </Border>
                         <StackPanel Grid.Column="1" Margin="14.5,0,0,0">
                             <TextBlock Text="Border" Style="{ThemeResource ListViewItemTextBlockStyle}"/>
-                            <TextBlock Text="Safe" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}" />
+                            <TextBlock Name="SafeBorder" Text="Data" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}" />
                             <TextBlock Text="Border Irregularity" HorizontalAlignment="Center" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" />
                             <ProgressBar Name="BorderProgressBar" Height="15" Maximum="100" Value="{Binding risk}"></ProgressBar>
                             <Grid>
@@ -132,8 +125,8 @@
                         </StackPanel>
                     </Grid>
                 </ListViewItem>
-                <ListViewItem Name="Colour">
-                    <Grid Width="370">
+                <ListViewItem>
+                    <Grid Width="370" Name="Colour">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
@@ -144,8 +137,8 @@
                         </Border>
                         <StackPanel Grid.Column="1" Margin="14.5,0,0,0">
                             <TextBlock Text="Colour" Style="{ThemeResource ListViewItemTextBlockStyle}"/>
+                            <TextBlock Name="SafeColour" Text="Data" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}" />
                             <TextBlock Text="Color Irregularity" HorizontalAlignment="Center" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" />
-                            <TextBlock Text="Safe" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}" />
                             <ProgressBar Name="ColourProgressBar" Height="15" Maximum="100" Value="{Binding risk}"></ProgressBar>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -158,20 +151,20 @@
                         </StackPanel>
                     </Grid>
                 </ListViewItem>
-                <ListViewItem Name="Diameter">
-                    <Grid Width="370">
+                <ListViewItem>
+                    <Grid Width="370" Name="Diameter">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
                         <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"  Grid.Column="0" HorizontalAlignment="Left">
-                            <Image Source="Assets/LightGray.png" Stretch="Fill" Height="100" Width="100"/>
+                            <Image Source="Assets/Mole_diameter.png" Stretch="Fill" Height="100" Width="100"/>
                         </Border>
                         <StackPanel Grid.Column="1" Margin="14.5,0,0,0">
                             <TextBlock Text="Diameter" Style="{ThemeResource ListViewItemTextBlockStyle}"/>
+                            <TextBlock Name="SafeArea" Text="Data" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}" />
                             <TextBlock Text="Area" HorizontalAlignment="Center" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" />
-                            <TextBlock Text="Safe" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}" />
                             <ProgressBar Name="AreaProgressBar" Height="15" Maximum="100" Value="{Binding risk}"></ProgressBar>
                             <Grid>
                                 <Grid.ColumnDefinitions>

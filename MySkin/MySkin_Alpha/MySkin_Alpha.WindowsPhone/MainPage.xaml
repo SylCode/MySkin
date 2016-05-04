@@ -63,6 +63,14 @@
                 <!--<Line X1="80" Y1="80" X2="0" Y2="80" Stroke="Red" StrokeThickness="2"></Line>-->
                 <!--<Line X1="80" Y1="80" X2="80" Y2="0" Stroke="Red" StrokeThickness="2"></Line>-->
             </Canvas>
+            <Button x:Name="FlashButton" Tapped="FlashButton_Tapped" VerticalAlignment="Center" HorizontalAlignment="Right" IsEnabled="True" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" d:LayoutRounding="Auto">
+                <Button.RenderTransform>
+                    <CompositeTransform Rotation="90"/>
+                </Button.RenderTransform>
+                <Viewbox MaxHeight="40" MaxWidth="40">
+                    <SymbolIcon x:Name="symbol" Symbol="Target"/>
+                </Viewbox>
+            </Button>
         </Grid>
         <Grid Grid.Row="2" Name="Meter" Margin="0,0.5,0,3.333">
 
@@ -91,11 +99,6 @@
                 <Line X1="190" Y1="20" X2="190" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
                 <Line X1="280" Y1="0" X2="280" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
                 <Line X1="250" Y1="20" X2="250" Y2="40" Stroke="Red" StrokeThickness="2"></Line>
-                <Button Name="FlashButton" Tapped="FlashButton_Tapped" IsEnabled="True" >
-                    <Viewbox MaxHeight="40" MaxWidth="40">
-                        <SymbolIcon Name="symbol" Symbol="Like"/>
-                    </Viewbox>
-                </Button>
             </Canvas>
         </Grid>
 

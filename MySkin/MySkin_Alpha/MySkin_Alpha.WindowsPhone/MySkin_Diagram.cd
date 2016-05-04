@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MySkin_Alpha.App" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAYAAAAAAAAAAAAAAAAAAAAQAABQIAIAAg=</HashCode>
+      <FileName>D:\Users\Никита\Documents\GitHub\MySkin\MySkin\MySkin_Alpha\MySkin_Alpha.Shared\App.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MySkin_Alpha.Mask" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAEAAAgAkAAAAAgAAEIAAAAAAAAAAIIACAAAAAA=</HashCode>
+      <FileName>D:\Users\Никита\Documents\GitHub\MySkin\MySkin\MySkin_Alpha\MySkin_Alpha.Shared\Mask.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MySkin_Alpha.Methods" Collapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAEkAAAABggARAQAEAAACAAAEojAAQEAAAAAAEAAk=</HashCode>
+      <FileName>D:\Users\Никита\Documents\GitHub\MySkin\MySkin\MySkin_Alpha\MySkin_Alpha.Shared\Methods.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MySkin_Alpha.Nevus" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAQAAAJAAACAkQADoRgEAMIiACAMCACgNUAAAAAMBAE=</HashCode>
+      <FileName>D:\Users\Никита\Documents\GitHub\MySkin\MySkin\MySkin_Alpha\MySkin_Alpha.Shared\Nevus.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MySkin_Alpha.CheckPage" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAEAQCAAADQAAAAAAAAARAAAAAAAQAAQAQAAEAAEA=</HashCode>
+      <FileName>CheckPage.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MySkin_Alpha.DatabasePage" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CQAAAAQAAAACQAAAAABAAAQEAAAAAAQAAAAAAAEAAEA=</HashCode>
+      <FileName>DatabasePage.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MySkin_Alpha.ImagePage" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAYAAgAAAAAAAAQAAAQAAAAAAAQAEQAEAgEAAkE=</HashCode>
+      <FileName>ImagePage.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MySkin_Alpha.ImageProcessor" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABQAEAACACgAAASASAASAAYAMAAEAAAAFQAEAgKCYAA=</HashCode>
+      <FileName>ImageProcessor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MySkin_Alpha.NevParams" Collapsed="true">
+    <Position X="7.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAIAAAAAAAAAAAAAAABAAAAAAAAAE=</HashCode>
+      <FileName>MainPage.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MySkin_Alpha.MainPage" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABLgAADAAQAIoADAUQqAKQRCAEAAQQwEQIgBAAADBAE=</HashCode>
+      <FileName>MainPage.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MySkin_Alpha.Common.NavigationHelper" Collapsed="true">
+    <Position X="5.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAUAAQAAAACAAIRAQAAAQAAAUAAAgAAAABAAk=</HashCode>
+      <FileName>Common\NavigationHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MySkin_Alpha.Common.LoadStateEventArgs" Collapsed="true">
+    <Position X="7.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\NavigationHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MySkin_Alpha.Common.SaveStateEventArgs" Collapsed="true">
+    <Position X="5.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\NavigationHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MySkin_Alpha.Common.ObservableDictionary" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CCIAAABAAAAEABAQCAAABAQBAAAAAAAAAAAgAABQIAA=</HashCode>
+      <FileName>Common\ObservableDictionary.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MySkin_Alpha.Common.RelayCommand" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQEACAAQAAECAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\RelayCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MySkin_Alpha.Common.SuspensionManager" Collapsed="true">
+    <Position X="7.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAaIAASCBEAAAICAAAAAIAAAAAAAAAAIAAAAhA=</HashCode>
+      <FileName>Common\SuspensionManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MySkin_Alpha.Common.SuspensionManagerException" Collapsed="true">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\SuspensionManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ContinuationManager" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQiCAAAAAABAAAAAACAAAAAAAAAAAAAAAAAAAAAAiA=</HashCode>
+      <FileName>ContinuationManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MySkin_Alpha.Data.DataItem" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAACAAAAFoAgAAAQgAAAICAAAAAAAAAAEAAE=</HashCode>
+      <FileName>DataModel\DataSource.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MySkin_Alpha.Data.DataGroup" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACEAEAAAAAIAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>DataModel\DataSource.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MySkin_Alpha.Data.DataSource" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAASEAEABAQAgAAAAIAAoAAAABAAAqEgAAAAAAAAEE=</HashCode>
+      <FileName>DataModel\DataSource.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="IFileOpenPickerContinuable" Collapsed="true">
+    <Position X="0.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ContinuationManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IFileSavePickerContinuable" Collapsed="true">
+    <Position X="2.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ContinuationManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IFolderPickerContinuable" Collapsed="true">
+    <Position X="4" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ContinuationManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IWebAuthenticationContinuable" Collapsed="true">
+    <Position X="5.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ContinuationManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Delegate Name="MySkin_Alpha.Common.LoadStateEventHandler" Collapsed="true">
+    <Position X="0.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\NavigationHelper.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="MySkin_Alpha.Common.SaveStateEventHandler" Collapsed="true">
+    <Position X="2.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\NavigationHelper.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

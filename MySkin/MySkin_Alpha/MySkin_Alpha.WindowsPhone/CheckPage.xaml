@@ -37,7 +37,7 @@
             <TextBlock x:Name="pageTitle" Text="{StaticResource AppName}" Style="{StaticResource HeaderTextBlockStyle}" 
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="10,0,166.167,9" Height="68" Grid.Column="1"/>
         </Grid>
-        <Grid Grid.Row="1" Margin="0,2,0,-3">
+        <Grid Name="appoint" Grid.Row="1" Margin="0,2,0,-3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="545*"/>
                 <RowDefinition Height="63*"/>

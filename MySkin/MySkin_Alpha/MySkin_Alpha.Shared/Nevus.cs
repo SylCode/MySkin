@@ -55,10 +55,10 @@ namespace MySkin_Alpha
         private static double blackW = 0.1;
         private static double redW = 0.15;
 
-        private static double aMax = 2;
-        private static double bMax = 1600;
-        private static double cMax = 1600;
-        private static double dMax = 550;
+        public static double aMax = 2.5;
+        public static double bMax = 1600;
+        public static double cMax = 1600;
+        public static double dMax = 550;
         private static double blackMax = 33;
         private static double blueMax = 33;
         private static double redMax = 33;
@@ -88,8 +88,24 @@ namespace MySkin_Alpha
                 this.colorVariation = cMax;
             if (borderVariation > 40)
                 unevenBorder = true;
+            if (borderVariation > bMax)
+                this.borderVariation = bMax;
             if (assymmetryRate > 1.3)
                 asymmetric = true;
+            if (assymmetryRate > aMax)
+                this.assymmetryRate = aMax;
+            if(redness+blueness+blackness > 100)
+            {
+                if (blueness > 100 && redness != 0)
+                    this.blueness = 100 - redness;
+                else if (redness > 100 && blueness != 0)
+                    this.redness = 100 - blueness;
+                if (blueness > 100 && redness == 0)
+                    this.blueness = 100;
+                else if (redness > 100 && blueness == 0)
+                    this.redness = 100;
+            }
+
             if ((bigDiameter && unevenColor && unevenBorder && asymmetric) || (blueness > 0.01 && redness > 0.01 && blackness > 0.01) || (colorVariation>600 && borderVariation>40)|| (blueness > 0.1 && blackness > 0.1) || (redness > 0.1 && borderVariation > 40) || (bigDiameter && blackness > 0.1) || (bigDiameter && blackness > 0.1 && blueness > 0.1) || (bigDiameter && colorVariation > 300))
                 safe = "Dangerous";
             else safe = "Safe";
@@ -110,6 +126,7 @@ namespace MySkin_Alpha
             else if (risk < 85)
                 safe = "Dangerous";
             else safe = "Extremely Dangerous";
+            risk = Math.Round(risk, 0);
         }
 
         private void analyze()

@@ -583,7 +583,8 @@ namespace MySkin_Alpha
                 blobCounter.GetBlobsLeftAndRightEdges(nev, out pointsL, out pointsR);
                 blobCounter.GetBlobsTopAndBottomEdges(nev, out pointsU, out pointsD);
                 double assymmetryRate;
-                pixelData = processor.analyzeBlob(pixelData, edgeGen, aimedRectangle, pointsL, pointsR, pointsU, pointsD,out assymmetryRate/*, out nevus*/);
+                byte[] border, color;
+                pixelData = processor.analyzeBlob(pixelData, edgeGen, aimedRectangle, pointsL, pointsR, pointsU, pointsD, out assymmetryRate, out border, out color);
                 colorDeviation = processor.colorVariation;
                 area = nev.Area;
                 double blackness = processor.blackness;

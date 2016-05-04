@@ -20,8 +20,8 @@ namespace MySkin_Alpha.Data
             this.area = area;
             this.borderVariation = borderVariation;
             this.assymmetryRate = assymmetryRate;
-            this.colorVariation = blackness;
-            this.blackness = colorVariation;
+            this.colorVariation = colorVariation;
+            this.blackness = blackness;
             this.blueness = blueness;
             this.redness = redness;
             this.imagePath = imagePath;
@@ -230,6 +230,16 @@ namespace MySkin_Alpha.Data
         public List<Nevus> GetNevusList()
         {
             return _sampleDataSource.ListNevus;
+        }
+
+        public static Nevus GetNevusById(string id)
+        {
+            foreach (Nevus n in _sampleDataSource.ListNevus)
+            {
+                if (n.name == id)
+                    return n;
+            }
+            return null;
         }
 
 
