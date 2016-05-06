@@ -146,6 +146,9 @@
       <HintPath>..\..\packages\portable.accord.core.3.0.2.60302\lib\portable-net45+netcore45+wpa81\Accord.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Accord.Fuzzy">
+      <HintPath>..\..\packages\portable.accord.fuzzy.3.0.2.60302\lib\portable-net45+netcore45+wpa81\Accord.Fuzzy.dll</HintPath>
+    </Reference>
     <Reference Include="Accord.Imaging, Version=3.0.2.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <HintPath>..\..\packages\portable.accord.imaging.3.0.2.60302\lib\portable-net45+netcore45+wpa81\Accord.Imaging.dll</HintPath>
       <Private>True</Private>

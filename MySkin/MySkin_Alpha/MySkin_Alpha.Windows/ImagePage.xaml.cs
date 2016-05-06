@@ -610,6 +610,9 @@ namespace MySkin_Alpha
                 //Accord.IO.CsvWriter csvWriter = new Accord.IO.CsvWriter()
                 //writeInfo(string.Format("{0:0.####}", scaledArea) + "," + string.Format("{0:0.####}", borderEvenRate) + "," + string.Format("{0:0.####}", colorDeviation) + "," + string.Format("{0:0.####}", blackness) + "," + string.Format("{0:0.####}", blueness) + "," + string.Format("{0:0.####}", redness) + ",");
                 nevus = new Nevus(name,"", scaledArea, borderEvenRate, assymmetryRate, colorDeviation, blackness, blueness, redness,path);
+                FuzzyDataItem item = new FuzzyDataItem();
+                Fuzzy.GetMembership(nevus.assymmetryRate, nevus.borderVariation, nevus.colorVariation, nevus.area, nevus.blueness, nevus.redness, out item);
+
                 writeInfo(nevus);
                 areaText.Text = string.Format("{0:0.##}", scaledArea);
                 borderVariationText.Text = string.Format("{0:0.##}", borderEvenRate);
