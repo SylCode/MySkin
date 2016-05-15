@@ -196,16 +196,16 @@ namespace MySkin_Alpha
             if (blobCounter.ObjectsCount != 0)
             {
                 Blob nev = blobCounter.GetObjectsInformation()[index];
-                if (nev.Rectangle.Contains((int)(width / 2), (int)(height / 2)) && new IntPoint((int)(width / 2), (int)(height / 2)).DistanceTo(new Accord.IntPoint(nev.Rectangle.Center().X, nev.Rectangle.Center().Y)) < 50)
-                {
-                    aimedRectangle = nev.Rectangle;
-                }
-                else
-                {
+                //if (nev.Rectangle.Contains((int)(width / 2), (int)(height / 2)) && new IntPoint((int)(width / 2), (int)(height / 2)).DistanceTo(new Accord.IntPoint(nev.Rectangle.Center().X, nev.Rectangle.Center().Y)) < 50)
+                //{
+                //    aimedRectangle = nev.Rectangle;
+                //}
+                //else
+                //{
                     index = processor.getMaxRectangle(blobCounter.GetObjectsRectangles(), (int)width - 1, (int)height - 1);
                     nev = blobCounter.GetObjectsInformation()[index];
                     aimedRectangle = nev.Rectangle;
-                }
+                //}
                 List<IntPoint> points = blobCounter.GetBlobsEdgePoints(blobCounter.GetObjectsInformation()[index]);
                 List<IntPoint> pointsL, pointsR, pointsU, pointsD;
                 pointsL = new List<IntPoint>();

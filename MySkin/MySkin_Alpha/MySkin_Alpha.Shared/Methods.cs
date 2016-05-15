@@ -711,14 +711,23 @@ namespace MySkin_Alpha
         {
             int ct = 0, index = 0;
             float min = imageWidth * imageHeight;
+            int max = -1;
             IntPoint p1 = new IntPoint(imageWidth / 2, imageHeight / 2);
 
             foreach (Rectangle rect in rects)
             {
-                if (p1.DistanceTo(new IntPoint(rect.Center().X, rect.Center().Y)) < min)
+                if (rect.Contains(p1.X, p1.Y))
                 {
-                    min = p1.DistanceTo(new IntPoint(rect.Center().X, rect.Center().Y));
-                    index = ct;
+                    //if (p1.DistanceTo(new IntPoint(rect.Center().X, rect.Center().Y)) < min)
+                    //{
+                    //    min = p1.DistanceTo(new IntPoint(rect.Center().X, rect.Center().Y));
+                    //    index = ct;
+                    //}
+                    if (rect.Width*rect.Height> max)
+                    {
+                        max = rect.Width * rect.Height;
+                        index = ct;
+                    }
                 }
                 ct++;
             }

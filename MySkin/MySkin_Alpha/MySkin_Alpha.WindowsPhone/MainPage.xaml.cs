@@ -22,6 +22,10 @@ using Windows.ApplicationModel.Activation;
 using Windows.UI.Popups;
 using Windows.UI.Core;
 using MySkin_Alpha.Data;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml.Shapes;
+using Windows.UI;
+using Windows.UI.Xaml.Media;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
 
@@ -42,9 +46,14 @@ namespace MySkin_Alpha
     public sealed partial class MainPage : Page, IFileOpenPickerContinuable
     {
         public static MainPage Current;
+
+        List<Line> scaleLines = new List<Line>();
+        List<Line> vertLines = new List<Line>();
+        List<Line> horLines = new List<Line>();
         public List<double> captureElementSize;
+        int interline = 30;
         private bool flash = true;
-        List<Nevus> nevData;
+        //List<Nevus> nevData;
         public MediaCapture MyMediaCapture { get; private set; }
         private readonly DisplayInformation displayInformation = DisplayInformation.GetForCurrentView();
         private DisplayOrientations displayOrientation = DisplayOrientations.Portrait;
@@ -56,7 +65,7 @@ namespace MySkin_Alpha
         private bool mirroringPreview;
         private bool focused = false;
         BitmapImage bit = new BitmapImage();
-        string filename = "Mole_";
+        //string filename = "Mole_";
         bool isPreviewing = false;
         bool isInitialized = false;
 
@@ -67,6 +76,7 @@ namespace MySkin_Alpha
         public MainPage()
         {
             this.InitializeComponent();
+            ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
             RegisterOrientationEventHandlers();
             InitCamera();
             this.NavigationCacheMode = NavigationCacheMode.Required;
@@ -94,6 +104,9 @@ namespace MySkin_Alpha
             }
             catch
             { }
+
+            //setMeasure(0);
+            //drawMeasure();
             // TODO: Prepare page for display here.
 
             // TODO: If your application contains multiple pages, ensure that you are
@@ -302,15 +315,19 @@ namespace MySkin_Alpha
         {
             if (args.Orientation != SimpleOrientation.Faceup && args.Orientation != SimpleOrientation.Facedown)
             {
-                deviceOrientation = args.Orientation;
-                if (MyMediaCapture != null)
-                    MyMediaCapture.SetPreviewRotation(ConvertSimpleOrientationToVideoRotation(deviceOrientation));
+                if (args.Orientation == SimpleOrientation.NotRotated)
+                {
+                    deviceOrientation = args.Orientation;
+                    if (MyMediaCapture != null)
+                        MyMediaCapture.SetPreviewRotation(ConvertSimpleOrientationToVideoRotation(deviceOrientation));
+                }
             }
         }
 
         private async void DisplayInformation_OrientationChanged(DisplayInformation sender, object args)
         {
-            displayOrientation = sender.CurrentOrientation;
+            //displayOrientation = sender.CurrentOrientation;
+            displayOrientation = DisplayOrientations.Portrait;
 
             if (isPreviewing)
             {
@@ -538,8 +555,8 @@ namespace MySkin_Alpha
                     {
                         NevParams nevParams = new NevParams();
                         nevParams.file = img;
-                        nevParams.captureElementSize = myCaptureElement.RenderSize;
-                        nevParams.interLine = refLine2.Y1 - refLine1.Y1;
+                        nevParams.captureElementSize = new Size(myCaptureElement.ActualWidth, myCaptureElement.ActualHeight);
+                        nevParams.interLine = interline;
                         Frame.Navigate(typeof(CheckPage), nevParams);
                     }
                 }
@@ -577,6 +594,113 @@ namespace MySkin_Alpha
                 flash = true;
                 symbol.Symbol = Symbol.Target;
             }
+        }
+
+        private void slider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            //interline += Convert.ToInt16(e.NewValue);
+            setMeasure(Convert.ToInt16(e.NewValue));
+            drawMeasure();
+        }
+
+        private void drawMeasure()
+        {
+            Lines.Children.Clear();
+            if (scaleLines.Count != 0 && vertLines.Count != 0 && horLines.Count != 0)
+            {
+                foreach (Line l in scaleLines)
+                    Lines.Children.Add(l);
+                foreach (Line l in vertLines)
+                    Lines.Children.Add(l);
+                foreach (Line l in horLines)
+                    Lines.Children.Add(l);
+            }
+        }
+        private void setMeasure(int interval)
+        {
+            vertLines.Clear();
+            horLines.Clear();
+            scaleLines.Clear();
+
+            SolidColorBrush br = new SolidColorBrush(Colors.Red);
+            int vX = Convert.ToInt32(Lines.ActualWidth / 4);
+            int vY = 40;
+
+            scaleLines.Add(new Line() {
+                X1 = vX,
+                X2 = vX,
+                Y1 = 0,
+                Y2 = 220 + interval*7,
+                Stroke = br,
+                StrokeThickness = 2,
+                Name = "VLine",
+            });
+
+            scaleLines.Add(new Line() {
+                Stroke = br,
+                StrokeThickness = 2,
+                Name = "HLine",
+                X1 = vX,
+                X2 = vX + 181 + interval*7,
+                Y1 = vY,
+                Y2 = vY
+            });
+
+            int tX = vX;
+            int tY = vY;
+
+            for (int i=0; i<7; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    horLines.Add(new Line()
+                    {
+                        Stroke = br,
+                        StrokeThickness = 2,
+                        Name = "h_" + i,
+                        X1 = vX,
+                        X2 = vX - 40,
+                        Y1 = tY,
+                        Y2 = tY
+                    });
+                    vertLines.Add(new Line()
+                    {
+                        Stroke = br,
+                        StrokeThickness = 2,
+                        Name = "v_" + i,
+                        X1 = tX,
+                        X2 = tX,
+                        Y1 = vY,
+                        Y2 = vY-40
+                    });
+                }
+                else
+                {
+                    horLines.Add(new Line()
+                    {
+                        Stroke = br,
+                        StrokeThickness = 2,
+                        Name = "h_" + i,
+                        X1 = vX,
+                        X2 = vX - 20,
+                        Y1 = tY,
+                        Y2 = tY
+                    });
+                    vertLines.Add(new Line()
+                    {
+                        Stroke = br,
+                        StrokeThickness = 2,
+                        Name = "v_" + i,
+                        X1 = tX,
+                        X2 = tX,
+                        Y1 = vY,
+                        Y2 = vY - 20
+                    });
+                }
+                tX += 30 + interval;
+                tY += 30 + interval;
+            }
+
         }
     }
 }

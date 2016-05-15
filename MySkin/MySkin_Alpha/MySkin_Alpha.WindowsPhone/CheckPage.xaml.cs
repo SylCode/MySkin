@@ -226,7 +226,7 @@ namespace MySkin_Alpha
                         appointment.StartTime = DateTime.Now;
                         appointment.Duration = new TimeSpan(61, 0, 0, 0);
                         appointment.Subject = "MySkin Mole Check";
-                        appointment.Details = "Please check the mole " + n.name + ": " + n.description + "via MySkin";
+                        appointment.Details = "Please check the mole " + n.name + ": " + n.description + " via MySkin";
                         appointment.AllDay = true;
                         appointment.Reminder = new TimeSpan(0, 15, 0);
                         await AppointmentManager.ShowAddAppointmentAsync(appointment, new Windows.Foundation.Rect(0, 0, appoint.Width, appoint.Height), Placement.Default);
@@ -239,7 +239,7 @@ namespace MySkin_Alpha
                         appointment.StartTime = DateTime.Now;
                         appointment.Duration = new TimeSpan(30, 0, 0, 0);
                         appointment.Subject = "MySkin Mole Check";
-                        appointment.Details = "Please check the mole " + n.name + ": " + n.description + "via MySkin";
+                        appointment.Details = "Please check the mole " + n.name + ": " + n.description + " via MySkin";
                         appointment.AllDay = true;
                         appointment.Reminder = new TimeSpan(0, 15, 0);
                         await AppointmentManager.ShowAddAppointmentAsync(appointment, new Windows.Foundation.Rect(0, 0, appoint.Width, appoint.Height), Placement.Default);

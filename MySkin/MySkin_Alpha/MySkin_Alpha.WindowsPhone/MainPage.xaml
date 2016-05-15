@@ -50,10 +50,11 @@
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" />
         </Grid>
 
+
         <!--<Frame x:Name="ScenarioFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Grid.Row="1"/>-->
         <CaptureElement Name="myCaptureElement" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.RowSpan="4" Tapped="myCaptureElement_Tapped"/>
-        <Grid Grid.Row="1" Name="Second" Grid.RowSpan="4">
-            <Canvas Name="Cross" VerticalAlignment="Center" Height="80" Width="80">
+        <Grid Grid.Row="2" Name="Second" >
+            <Canvas Name="Cross" HorizontalAlignment="Center" VerticalAlignment="Center" Height="80" Width="80">
                 <Line X1="60" Y1="20" X2="20" Y2="60" Stroke="Red" StrokeThickness="1"></Line>
                 <Line X1="20" Y1="20" X2="60" Y2="60" Stroke="Red" StrokeThickness="1"></Line>
                 <Line X1="40" Y1="0" X2="40" Y2="80" Stroke="White" StrokeThickness="1"></Line>
@@ -63,6 +64,10 @@
                 <!--<Line X1="80" Y1="80" X2="0" Y2="80" Stroke="Red" StrokeThickness="2"></Line>-->
                 <!--<Line X1="80" Y1="80" X2="80" Y2="0" Stroke="Red" StrokeThickness="2"></Line>-->
             </Canvas>
+            <Canvas Name="RectCanvas" VerticalAlignment="Center" HorizontalAlignment="Center" Height="170" Width="170">
+                <Rectangle Name="RectCapture" Width="170" Height="170" Stroke="LimeGreen" StrokeThickness="3"/>
+            </Canvas>
+
             <Button x:Name="FlashButton" Tapped="FlashButton_Tapped" VerticalAlignment="Center" HorizontalAlignment="Right" IsEnabled="True" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" d:LayoutRounding="Auto">
                 <Button.RenderTransform>
                     <CompositeTransform Rotation="90"/>
@@ -72,8 +77,7 @@
                 </Viewbox>
             </Button>
         </Grid>
-        <Grid Grid.Row="2" Name="Meter" Margin="0,0.5,0,3.333">
-
+        <Grid Grid.Row="2" Name="Meter">
             <Canvas Name="Lines" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                 <!--<Line X1="60" Y1="65" X2="100" Y2="65" Stroke="Red" StrokeThickness="2"></Line>
                 <Line X1="80" Y1="95" X2="100" Y2="95" Stroke="Red" StrokeThickness="2"></Line>
@@ -136,6 +140,11 @@
                 Text="[   ]" 
                 FontSize="60"
             Visibility="Collapsed" Margin="200,155.5,200,80.333" Height="0" Width="0"/>
+
         <!--<Button x:Name="openButton" Content="Open" HorizontalAlignment="Center" Height="58" VerticalAlignment="Center" Width="109" Click="openButton_Click" Margin="281,522,10,0" RenderTransformOrigin="0.5,0.5" Grid.Row="1"/>-->
+
+        <Grid Grid.Row="1">
+            <Slider x:Name="slider" HorizontalAlignment="Center" Value="0" VerticalAlignment="Bottom" Width="250" Maximum="45" Minimum ="-15" Header="Scale" StepFrequency="1" ValueChanged="slider_ValueChanged" />
+        </Grid>
     </Grid>
 </Page>
