@@ -68,7 +68,7 @@
                 <Rectangle Name="RectCapture" Width="170" Height="170" Stroke="LimeGreen" StrokeThickness="3"/>
             </Canvas>
 
-            <Button x:Name="FlashButton" Tapped="FlashButton_Tapped" VerticalAlignment="Center" HorizontalAlignment="Right" IsEnabled="True" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" d:LayoutRounding="Auto">
+            <Button x:Name="FlashButton"  Tapped="FlashButton_Tapped" VerticalAlignment="Center" HorizontalAlignment="Right" IsEnabled="True" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" d:LayoutRounding="Auto">
                 <Button.RenderTransform>
                     <CompositeTransform Rotation="90"/>
                 </Button.RenderTransform>

@@ -47,13 +47,13 @@ namespace MySkin_Alpha
         public double risk { get; private set; }
 
         private static double total;
-        private static double aW = 0.15;
-        private static double bW = 0.10;
+        private static double aW = 0.13;
+        private static double bW = 0.15;
         private static double cW = 0.18;
         private static double dW = 0.12;
-        private static double blueW =0.2;
+        private static double blueW = 0.2;
         private static double blackW = 0.1;
-        private static double redW = 0.15;
+        private static double redW = 0.12;
 
         public static double aMax = 2.5;
         public static double bMax = 1600;

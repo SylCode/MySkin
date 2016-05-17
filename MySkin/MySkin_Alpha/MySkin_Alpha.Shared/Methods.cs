@@ -489,18 +489,19 @@ namespace MySkin_Alpha
             border = new byte[gray.Length];
             color = new byte[gray.Length];
             
-            double[] dims = new double[2];
             List<double> blobPointColorsR = new List<double>();
             List<double> blobPointColorsG = new List<double>();
             List<double> blobPointColorsB = new List<double>();
 
-            dims[0] = pointsL[pointsL.Count / 2].DistanceTo(pointsR[pointsR.Count / 2]);
-            dims[1] = pointsU[pointsU.Count / 2].DistanceTo(pointsD[pointsD.Count / 2]);
-            if (dims[0] > dims[1])
-            {
-                assymmetryRate = dims[0] / dims[1];
-            }
-            else assymmetryRate = dims[1] / dims[0];
+            //double[] dims = new double[2];
+            //dims[0] = pointsL[pointsL.Count / 2].DistanceTo(pointsR[pointsR.Count / 2]);
+            //dims[1] = pointsU[pointsU.Count / 2].DistanceTo(pointsD[pointsD.Count / 2]);
+            //if (dims[0] > dims[1])
+            //{
+            //    assymmetryRate = dims[0] / dims[1];
+            //}
+            //else assymmetryRate = dims[1] / dims[0];
+
 
             for (int i=0; i<gray.Length; i++)
             {
@@ -704,6 +705,7 @@ namespace MySkin_Alpha
             //Nevus nev = new Nevus()
 
 
+            assymmetryRate = getAssymmetryRate(pointsL, pointsR, pointsU, pointsD);
             return final;
         }
 
@@ -732,6 +734,68 @@ namespace MySkin_Alpha
                 ct++;
             }
             return index;
+        }
+
+        private double getAssymmetryRate(List<IntPoint> leftPoints, List<IntPoint> rightPoints, List<IntPoint> upperPoints, List<IntPoint> bottomPoints)
+        {
+            double ar = 0;
+            double maxH = 0, maxW = 0;
+            int left = 0, pleft = leftPoints.Count / 2, pright = leftPoints.Count / 2, top = 0, bottom = 0;
+            for (int i=0; i<leftPoints.Count; i++)
+            {
+                if (leftPoints[i].DistanceTo(rightPoints[rightPoints.Count - i - 1]) > maxH)
+                {
+                    maxH = leftPoints[i].DistanceTo(rightPoints[rightPoints.Count - i - 1]);
+                    left = i;
+                    top = pleft;
+                    bottom = pright;
+                }
+                pleft++;
+                pright--;
+                if (pleft > leftPoints.Count - 1)
+                {
+                    pleft = 0;
+                    pright = leftPoints.Count;
+                }
+
+            }
+            int oldTop = top, oldBottom = bottom;
+            while (top < leftPoints.Count && bottom < rightPoints.Count)
+            {
+                if (leftPoints[top].DistanceTo(rightPoints[bottom]) > maxW)
+                {
+                    maxW = leftPoints[top].DistanceTo(rightPoints[bottom]);
+                }
+                top++;
+                bottom++;
+            }
+            top = oldTop;
+            bottom = oldBottom;
+            while (top > 0 && bottom > 0)
+            {
+                if (leftPoints[top].DistanceTo(rightPoints[bottom]) > maxW)
+                {
+                    maxW = leftPoints[top].DistanceTo(rightPoints[bottom]);
+                }
+                top--;
+                bottom--;
+            }
+
+
+            if (maxH > maxW)
+            {
+                ar = maxH / maxW;
+            }
+            else ar = maxW / maxH;
+
+            return ar;
+        }
+
+        private int getAngle(IntPoint p)
+        {
+            int angle = 0;
+
+            return angle;
         }
     }
 }
